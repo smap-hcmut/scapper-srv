@@ -2,10 +2,23 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from loguru import logger
 from tinlikesub import TinLikeSubClient
+
+# Extract aweme_id from TikTok video URL
+# e.g. https://www.tiktok.com/@user/video/7612600015135034644 → 7612600015135034644
+_VIDEO_ID_RE = re.compile(r"/video/(\d+)")
+
+
+def _extract_aweme_id(video_url: str) -> str:
+    """Extract aweme_id from a TikTok video URL."""
+    m = _VIDEO_ID_RE.search(video_url)
+    if not m:
+        raise ValueError(f"Cannot extract aweme_id from URL: {video_url}")
+    return m.group(1)
 
 
 async def handle_search(client: TinLikeSubClient, params: dict) -> Any:
@@ -21,13 +34,46 @@ async def handle_post_detail(client: TinLikeSubClient, params: dict) -> Any:
 
 
 async def handle_comments(client: TinLikeSubClient, params: dict) -> Any:
-    aweme_id = params["aweme_id"]
+    # Accept video_url (preferred) or aweme_id (backward compat)
+    video_url = params.get("video_url")
+    if video_url:
+        aweme_id = _extract_aweme_id(video_url)
+    else:
+        aweme_id = params["aweme_id"]
+
     cursor = params.get("cursor", 0)
     count = params.get("count", 50)
     threshold = params.get("threshold")
     logger.info(f"[TikTok] comments: aweme_id={aweme_id} cursor={cursor} count={count}")
     return await client.tiktok.get_comments(
         aweme_id=aweme_id, cursor=cursor, count=count, threshold=threshold,
+    )
+
+
+async def handle_summary(client: TinLikeSubClient, params: dict) -> Any:
+    # Accept video_url (preferred) or item_id
+    video_url = params.get("video_url")
+    if video_url:
+        item_id = _extract_aweme_id(video_url)
+    else:
+        item_id = params["item_id"]
+    logger.info(f"[TikTok] summary: item_id={item_id}")
+    return await client.tiktok.get_summary(item_id=item_id)
+
+
+async def handle_comment_replies(client: TinLikeSubClient, params: dict) -> Any:
+    # Accept video_url (preferred) or item_id
+    video_url = params.get("video_url")
+    if video_url:
+        item_id = _extract_aweme_id(video_url)
+    else:
+        item_id = params["item_id"]
+    comment_id = params["comment_id"]
+    cursor = params.get("cursor", 0)
+    count = params.get("count", 50)
+    logger.info(f"[TikTok] comment_replies: item_id={item_id} comment_id={comment_id}")
+    return await client.tiktok.get_comment_replies(
+        item_id=item_id, comment_id=comment_id, cursor=cursor, count=count,
     )
 
 
@@ -85,6 +131,8 @@ HANDLERS = {
     "search": handle_search,
     "post_detail": handle_post_detail,
     "comments": handle_comments,
+    "summary": handle_summary,
+    "comment_replies": handle_comment_replies,
     "cookie_check": handle_cookie_check,
     "full_flow": handle_full_flow,
 }

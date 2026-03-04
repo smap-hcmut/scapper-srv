@@ -1,0 +1,11 @@
+{
+  "task_id": "unknown",
+  "queue": "tiktok_tasks",
+  "action": "unknown",
+  "params": {},
+  "created_at": "",
+  "completed_at": "2026-03-04T08:56:28.069545+00:00",
+  "status": "error",
+  "result": null,
+  "error": "Expecting property name enclosed in double quotes: line 5 column 1 (char 145)"
+}

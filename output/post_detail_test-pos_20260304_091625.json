@@ -1,0 +1,50 @@
+{
+  "task_id": "test-post-detail-fb",
+  "queue": "facebook_tasks",
+  "action": "post_detail",
+  "params": {
+    "parse_id": "100069153349307_pfbid0m6dmZhdGq59QT1DQY7m6Cp8cNDc1eiAT29prRfnJegdwwz1VLYj9ovStdyarETm4l"
+  },
+  "created_at": "",
+  "completed_at": "2026-03-04T09:16:25.559768+00:00",
+  "status": "success",
+  "result": {
+    "id": "1509435412435707_1204092691905831",
+    "message": "Đau đầu, mất ngủ, khám sức khỏe tổng thể không phát hiện bệnh, nam thanh niên 24 tuổi đi viện tâm thần thì được chẩn đoán bị stress vì thiếu tiền, áp lực tài chính lớn",
+    "story": null,
+    "from_name": "Theanh28 Entertainment",
+    "from_id": "1509435412435707",
+    "created_time": "2026-01-11T14:06:21+0000",
+    "updated_time": "2026-01-24T14:36:57+0000",
+    "type": "photo",
+    "status_type": "added_photos",
+    "full_picture": "https://scontent.fsgn5-13.fna.fbcdn.net/v/t39.30808-6/612949530_1204092171905883_7721173560535473076_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=13d280&_nc_ohc=99sZ5JIlEasQ7kNvwFDUom1&_nc_oc=Adk31VO41sQQuUCVBLAnph-NZriFtVcqK5nYLAK-SU9J9tr2JV6eMBhrFb_mXU58KEI&_nc_zt=23&_nc_ht=scontent.fsgn5-13.fna&edm=ADqbNqUEAAAA&_nc_gid=a5NBzrjEX76xt5ebrLKeqA&_nc_tpa=Q5bMBQGJpwxL-2l8nBeL4np3Fta8gKW9Le_Y1HvR03jNGwmIHAbRiFg76RJvjBIzwQNHi0Fz_5PMiC9HQg&oh=00_Afz4ZJ8uh2YE7_Y4KzB2Cusr3sWk-BcPFwVCeEt7Qmc1dw&oe=69ADD043",
+    "link": "https://www.facebook.com/photo.php?fbid=1204092665239167&set=a.563707935944313&type=3",
+    "permalink_url": "https://www.facebook.com/1248056530842780/posts/1204092691905831",
+    "reactions_count": 62498,
+    "comments_count": 6502,
+    "shares_count": 5385,
+    "attachments": [
+      {
+        "type": "album",
+        "title": "Ảnh từ bài viết của Theanh28 Entertainment",
+        "description": null,
+        "url": "https://www.facebook.com/1248056530842780/posts/1204092691905831",
+        "media_url": "https://scontent.fsgn5-13.fna.fbcdn.net/v/t39.30808-6/612949530_1204092171905883_7721173560535473076_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=13d280&_nc_ohc=99sZ5JIlEasQ7kNvwFDUom1&_nc_oc=Adk31VO41sQQuUCVBLAnph-NZriFtVcqK5nYLAK-SU9J9tr2JV6eMBhrFb_mXU58KEI&_nc_zt=23&_nc_ht=scontent.fsgn5-13.fna&edm=ADqbNqUEAAAA&_nc_gid=a5NBzrjEX76xt5ebrLKeqA&_nc_tpa=Q5bMBQELuyzOHJS-dngbtd86NeUE7orcHyWuE67pnS4zo_r6X72PLXkoyAq3IsxKN5b6hZBkH3IppzSlCQ&oh=00_Afzl9CdqLUa1pMBV6B88nEOJX13JjUEzshLyWjRuQtOauQ&oe=69ADD043",
+        "subattachments": [
+          {
+            "type": "photo",
+            "url": "https://www.facebook.com/photo.php?fbid=1204092665239167&set=a.563707935944313&type=3",
+            "media_url": "https://scontent.fsgn5-13.fna.fbcdn.net/v/t39.30808-6/612949530_1204092171905883_7721173560535473076_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=13d280&_nc_ohc=99sZ5JIlEasQ7kNvwFDUom1&_nc_oc=Adk31VO41sQQuUCVBLAnph-NZriFtVcqK5nYLAK-SU9J9tr2JV6eMBhrFb_mXU58KEI&_nc_zt=23&_nc_ht=scontent.fsgn5-13.fna&edm=ADqbNqUEAAAA&_nc_gid=a5NBzrjEX76xt5ebrLKeqA&_nc_tpa=Q5bMBQEkyDZDNx-8VITd00p9drV1ERDq8f1W6bAxsn1LRiWT4jBq5zqjXnCHb9ypytN7ktobEcfS4ScgAQ&oh=00_AfyxOskg0TySPj_bAqcB5ET4tWlU0788kzYcHzrahgHIAA&oe=69ADD043"
+          },
+          {
+            "type": "photo",
+            "url": "https://www.facebook.com/photo.php?fbid=1204092668572500&set=a.563707935944313&type=3",
+            "media_url": "https://scontent.fsgn5-6.fna.fbcdn.net/v/t39.30808-6/615176986_1204092168572550_403416505766035607_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=13d280&_nc_ohc=F7JqF8xIUSoQ7kNvwGD3gX3&_nc_oc=AdmEdpxNyokyWn3S5djiJsMjKPPrb8V1GyWHXWBVCIpWm-iGmP07nr1w1nXUuStyuZM&_nc_zt=23&_nc_ht=scontent.fsgn5-6.fna&edm=ADqbNqUEAAAA&_nc_gid=a5NBzrjEX76xt5ebrLKeqA&_nc_tpa=Q5bMBQFsmWUjZOrlt5TsF6R5XFpcO1w4A6up4RjcRFwz_N6qIjzZAS-RtjK5U6_uLbF8iEf5YUE17UgsrA&oh=00_AfxQ1-E23awWDtdxqBMq9UEmP4uBNmLEZy6TY8Bq6OZ7dA&oe=69ADE16E"
+          }
+        ]
+      }
+    ]
+  },
+  "error": null
+}

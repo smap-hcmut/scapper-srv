@@ -23,7 +23,28 @@ async def handle_videos(client: TinLikeSubClient, params: dict) -> Any:
     return await client.youtube.get_videos(keyword=keyword, page=page, page_size=page_size)
 
 
+async def handle_video_detail(client: TinLikeSubClient, params: dict) -> Any:
+    video_id = params["video_id"]
+    logger.info(f"[YouTube] video_detail: video_id={video_id}")
+    return await client.youtube.get_video_detail(video_id=video_id)
+
+
+async def handle_transcript(client: TinLikeSubClient, params: dict) -> Any:
+    video_id = params["video_id"]
+    logger.info(f"[YouTube] transcript: video_id={video_id}")
+    return await client.youtube.get_transcript(video_id=video_id)
+
+
+async def handle_comments(client: TinLikeSubClient, params: dict) -> Any:
+    video_id = params["video_id"]
+    logger.info(f"[YouTube] comments: video_id={video_id}")
+    return await client.youtube.get_comments(video_id=video_id)
+
+
 HANDLERS = {
     "search": handle_search,
     "videos": handle_videos,
+    "video_detail": handle_video_detail,
+    "transcript": handle_transcript,
+    "comments": handle_comments,
 }

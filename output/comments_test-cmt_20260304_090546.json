@@ -1,0 +1,922 @@
+{
+  "task_id": "test-cmt-1",
+  "queue": "tiktok_tasks",
+  "action": "comments",
+  "params": {
+    "video_url": "https://www.tiktok.com/@vutrunews.official/video/7612600015135034644",
+    "count": 50,
+    "threshold": 0.5
+  },
+  "created_at": "",
+  "completed_at": "2026-03-04T09:05:46.769365+00:00",
+  "status": "success",
+  "result": {
+    "aweme_id": "7612600015135034644",
+    "cursor": 50,
+    "has_more": true,
+    "total": 637,
+    "comments": [
+      {
+        "comment_id": "7612889962178773778",
+        "content": "Lý do gì mà 2 nước chiến tranh vậy mn.ko biết nên hỏi ạ",
+        "author": {
+          "uid": "6818423271881917442",
+          "username": "user627676255",
+          "nickname": "Hồng Ngọc",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/34f4e0e98ddbfe252460b5ed69056d70~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=2054e732&x-expires=1772701200&x-signature=octWncmgvBDMuhOtT4RyWGyy9IE%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 130,
+        "reply_count": 42,
+        "sort_extra_score": {
+          "reply_score": 0.001266,
+          "show_more_score": 0.462867
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T05:01:26Z"
+      },
+      {
+        "comment_id": "7612802362953270037",
+        "content": "Giá xăng dầu lại lên cao nữa rồi",
+        "author": {
+          "uid": "6603672632611733506",
+          "username": "trihuynh67l2",
+          "nickname": "Music Chill (Trí Huỳnh📸)",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/ad97dac85a0f22742175ad025a1ee1af~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=8666e745&x-expires=1772701200&x-signature=72Ug1GvdpnpY7MYUTXEWqxtoubI%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1145,
+        "reply_count": 20,
+        "sort_extra_score": {
+          "reply_score": 0.000293,
+          "show_more_score": 0.412545
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-02T23:21:38Z"
+      },
+      {
+        "comment_id": "7612899735414588181",
+        "content": "tao ủng hộ Iran. sản bằng mĩ luôn đi. cuba khổ quá òi",
+        "author": {
+          "uid": "7217357934353744901",
+          "username": "user4228770742628",
+          "nickname": "nhớ cố Hương",
+          "avatar": "https://p16-sign-va.tiktokcdn.com/musically-maliva-obj/1594805258216454~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=f8cf84b3&x-expires=1772701200&x-signature=utP%2Fx%2F2tEPdm0Kx5Oy3FErX363g%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 67,
+        "reply_count": 7,
+        "sort_extra_score": {
+          "reply_score": 0.000641,
+          "show_more_score": 0.269553
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T05:39:20Z"
+      },
+      {
+        "comment_id": "7612827852211340050",
+        "content": "Như này rồi sao bao giờ vàng xuống giá để em cưới dợ đây mấy anh🥺",
+        "author": {
+          "uid": "6955867081192342529",
+          "username": "datbii0904",
+          "nickname": "Thành Đạt",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/7d06ca13b3f95377fd6af079bac74aba~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=b87e0b49&x-expires=1772701200&x-signature=Iu%2FQmSTz62D821hHFshzqY%2Bp8A0%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 148,
+        "reply_count": 23,
+        "sort_extra_score": {
+          "reply_score": 0.000447,
+          "show_more_score": 0.157699
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T01:00:20Z"
+      },
+      {
+        "comment_id": "7612728880757146375",
+        "content": "Cầu mong hoà bình tới thế giới 🥺",
+        "author": {
+          "uid": "7138757437612786689",
+          "username": "maile1858",
+          "nickname": "maile1858",
+          "avatar": "https://p19-common-sign-useastred.tiktokcdn-eu.com/tos-useast2a-avt-0068-giso/7138757811769376795~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=5ee00702&x-expires=1772701200&x-signature=CIaqz9%2B0K%2BE6cFVa%2Fk2ObNQeyMk%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 950,
+        "reply_count": 11,
+        "sort_extra_score": {
+          "reply_score": 0.00032,
+          "show_more_score": 0.078418
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-02T18:36:20Z"
+      },
+      {
+        "comment_id": "7612910917202936596",
+        "content": "Sao ko gộp lại 1 nước nhỉ",
+        "author": {
+          "uid": "7166030031100757018",
+          "username": "khanhdat_041116",
+          "nickname": "KhánhĐạt2016",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/631d0a50fe78b748997d43fe37e4a5e9~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=2921aea4&x-expires=1772701200&x-signature=twoRxTRMsXQRkvjwZn4xea0E6O8%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 7,
+        "sort_extra_score": {
+          "reply_score": 0.000413,
+          "show_more_score": 0.198886
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T06:22:51Z"
+      },
+      {
+        "comment_id": "7612907013818925831",
+        "content": "mình nghèo ko quan tâm lắm cứ ngày có 3 bữa cơm là ấm rồi",
+        "author": {
+          "uid": "6823482777062130690",
+          "username": "x.thinh84",
+          "nickname": "༒Thịnh Cô Đơn༒",
+          "avatar": "https://p9-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/76225613f4e2c534cf6e2d413ff5ecb0~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=55ab7093&x-expires=1772701200&x-signature=slfq0T99iYLTJlH7919rjDoGRkw%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 50,
+        "reply_count": 7,
+        "sort_extra_score": {
+          "reply_score": 0.000387,
+          "show_more_score": 0.092859
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T06:07:32Z"
+      },
+      {
+        "comment_id": "7613273370076349192",
+        "content": "đã đến lúc t phải ra tay ngăn chặn r 😔",
+        "author": {
+          "uid": "7135403405304513542",
+          "username": "hnguyen_037",
+          "nickname": "hn.",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/fc17217c5aca78d9ac5523a0716ff2f5~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=47051fba&x-expires=1772701200&x-signature=9MwdW54zG77xuo0eU6i2oIoxnnQ%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 2,
+        "sort_extra_score": {
+          "reply_score": 0.000511,
+          "show_more_score": 0.07098
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T05:49:16Z"
+      },
+      {
+        "comment_id": "7612879445348090645",
+        "content": "vàng lại lên như bắn tên lửa",
+        "author": {
+          "uid": "6812086583664739329",
+          "username": "omaichua1986",
+          "nickname": "MaiAnh BDS",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/e1b56b7fad5249c76e0e17ded2b35f15~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=6a169e34&x-expires=1772701200&x-signature=%2Fw4zFQYYB%2BIz%2B1f1716D9eprlhY%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 3,
+        "sort_extra_score": {
+          "reply_score": 0.000156,
+          "show_more_score": 0.123031
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T04:20:41Z"
+      },
+      {
+        "comment_id": "7612886055855653639",
+        "content": "Giỏi quá giỏi . Xem Trum còn giữ đc chức k",
+        "author": {
+          "uid": "6725733171750519810",
+          "username": "phamtuyen9119",
+          "nickname": "Tuyen Pham2561",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/7335966541642465282~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=a4840594&x-expires=1772701200&x-signature=qWo762bOo1gJBE%2FHVqMLOZzOLBc%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 1,
+        "sort_extra_score": {
+          "reply_score": 0.000526,
+          "show_more_score": 0.158546
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T04:46:14Z"
+      },
+      {
+        "comment_id": "7612867137192117009",
+        "content": "những nước vùng vịnh giàu quá, trong vòng 3 ngày sẽ thành nước chốn chạy giặc, Iran mạnh quá,Mỹ đang đùa với Iran,đánh trận này Mỹ suy yếu!!Vùng Vịnh chất thuộc về Iran",
+        "author": {
+          "uid": "7376601385511781381",
+          "username": "hu.tnh.v2",
+          "nickname": "Tính thích Farm(bán đất ruộng)",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/6be9534492711f7716a5c238591891c1~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=1ed93f57&x-expires=1772701200&x-signature=K1GJ1fIQsstESzHr29KE3cZwizE%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 5,
+        "reply_count": 1,
+        "sort_extra_score": {
+          "reply_score": 0.000501,
+          "show_more_score": 0.04766
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T03:33:14Z"
+      },
+      {
+        "comment_id": "7612913597808067349",
+        "content": "họ ko dùng AI à🐧",
+        "author": {
+          "uid": "7302383108425499649",
+          "username": "huybaka38",
+          "nickname": "tôi yêu mary sue😭",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/08907850498de2095b8b8dbac34624d6~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=74a8dad2&x-expires=1772701200&x-signature=OgoFtu3XADOiLNV6i1AimXmBdXQ%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 2,
+        "sort_extra_score": {
+          "reply_score": 0.000368,
+          "show_more_score": 0.106796
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T06:33:15Z"
+      },
+      {
+        "comment_id": "7612974650713654034",
+        "content": "Nghe mùi anh họa sĩ người Áo năm đó r.... 1 mình cân xong bay màu",
+        "author": {
+          "uid": "7304187607096574982",
+          "username": "ton64179",
+          "nickname": "Toàn",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/ac191379af7ba71c5ee2df86ae76d3d9~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=017e9bc8&x-expires=1772701200&x-signature=EkDhRBpQ5QPa8qOSC%2F2h32NNiIM%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 8,
+        "sort_extra_score": {
+          "reply_score": 0.000389,
+          "show_more_score": 0.046014
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T10:30:07Z"
+      },
+      {
+        "comment_id": "7613264216976016136",
+        "content": "Tại sao mỹ đánh iran mà iran lại đánh 15 nước khác",
+        "author": {
+          "uid": "6651059020957057026",
+          "username": "thudung1798",
+          "nickname": "Dung Dung1798",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/61f91cdcf59bead0b3d01a8fad4c1b40~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=8e4a3cb9&x-expires=1772701200&x-signature=j3NxkWhEW0iHu6hL7qTEC1zyjY8%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000901,
+          "show_more_score": 3.4e-05
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T05:13:40Z"
+      },
+      {
+        "comment_id": "7612978241733608213",
+        "content": "Vàng , xăng , dầu , gas lại tăng lên nữa 😬",
+        "author": {
+          "uid": "7304661470444241922",
+          "username": "ngoctrang.6789",
+          "nickname": "Ginn🍁",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/be37aacf76dd8663f5362b4b11be0e83~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=a92013b8&x-expires=1772701200&x-signature=OpJOZou4%2FRmfIIwqIcsf41QjQ2A%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 0,
+        "reply_count": 1,
+        "sort_extra_score": {
+          "reply_score": 0.000497,
+          "show_more_score": 0.050055
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T10:44:00Z"
+      },
+      {
+        "comment_id": "7613245893634802453",
+        "content": "“Chính nước Mỹ đã đẩy khu vực vào hỗn loạn”",
+        "author": {
+          "uid": "7474609423093613574",
+          "username": "hao.nguyen483",
+          "nickname": "A Hao",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/e1d37b33a489784bf3295294a53b0990~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=5084f27a&x-expires=1772701200&x-signature=WGMa8kB1OIROW5JAKrrONECCTsU%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 0,
+        "reply_count": 1,
+        "sort_extra_score": {
+          "reply_score": 0.000452,
+          "show_more_score": 0.021794
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T04:02:41Z"
+      },
+      {
+        "comment_id": "7612684113337762581",
+        "content": "buồn",
+        "author": {
+          "uid": "7016284699303969793",
+          "username": "huethu_84",
+          "nickname": "huethu_84",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/7307486093098614792~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=6780805d&x-expires=1772701200&x-signature=uVFiU88Dpd5X0HL756hBt0W84to%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 132,
+        "reply_count": 3,
+        "sort_extra_score": {
+          "reply_score": 2.5e-05,
+          "show_more_score": 0.018767
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-02T15:42:29Z"
+      },
+      {
+        "comment_id": "7613304782837023504",
+        "content": "nói thật t nể iran cực kỳ sau khi nghe tin 1 phát đánh 15 nước",
+        "author": {
+          "uid": "7507860350142792720",
+          "username": "danghiravnedit",
+          "nickname": "Đăng Hira VN",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/a260cc9472ec494e5bd461a0170dad92~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=e3c31f40&x-expires=1772701200&x-signature=VpXZ%2BXTJLLxyk2TMvcv0LixenaE%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 0,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000258,
+          "show_more_score": 2e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T07:51:11Z"
+      },
+      {
+        "comment_id": "7612888625018241812",
+        "content": "1 content duy nhất tất cả các page , kênh tiktok , youtuber, 😂😂",
+        "author": {
+          "uid": "6716366840061117441",
+          "username": "hathanhtrung",
+          "nickname": "Hà Thành Trung",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/6329ca48b746b0bf405f98cbf4cbce75~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=c6c2ad70&x-expires=1772701200&x-signature=FzhNhD%2BaR24dnI%2Fm793AZ1Raapg%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 1,
+        "sort_extra_score": {
+          "reply_score": 0.000115,
+          "show_more_score": 0.031639
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T04:56:18Z"
+      },
+      {
+        "comment_id": "7612948435138233109",
+        "content": "Nhà tôi nghèo lắm,ợ trong rừng trong núi,nên tôi cũng quan tâm cho lắm",
+        "author": {
+          "uid": "7038590384074720258",
+          "username": "thongnguyen715",
+          "nickname": "thong.nguyễn.1992.37",
+          "avatar": "https://p9-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/2bbc20be510e5bae7e8b7adf0010be29~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=7c902ab6&x-expires=1772701200&x-signature=yGs3jw3%2BGofq4dOZP2mC8DhfyDg%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 9e-05,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T08:48:17Z"
+      },
+      {
+        "comment_id": "7612882491347092241",
+        "content": "Ép quá iran no đua nguyên tử zo thì nhiều quốc gia cung theo nó lun",
+        "author": {
+          "uid": "7064961610955326466",
+          "username": "usermjom5p69cp",
+          "nickname": "Quý Nguyễn54127",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/7065441417924968449~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=546c753a&x-expires=1772701200&x-signature=cKfuz9znET8p%2FVrQuPuoL9i4qr8%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000144,
+          "show_more_score": 3e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T04:32:28Z"
+      },
+      {
+        "comment_id": "7612868564064060180",
+        "content": "thà 1 phút huy hoàng rồi chợt tắt\ncòn hơn le lói mãi về sau\ngiờ có thỏa hiệp thì sẽ bị đè đầu cưỡi cổ, chơi tới lun",
+        "author": {
+          "uid": "7356076225591477256",
+          "username": "sn.hong523",
+          "nickname": "Sơn Hoàng",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/379556a2a5839322bd751845df4c2a2d~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=6ccd4b25&x-expires=1772701200&x-signature=xION0rUH30Jfot6QCsgzZj4KHX4%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 33,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 8.8e-05,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T03:38:21Z"
+      },
+      {
+        "comment_id": "7612982183888945928",
+        "content": "1 thằng cân 15 thằng bao gồm thằng trùm. Iran đỉnh rồi",
+        "author": {
+          "uid": "7494983779011675153",
+          "username": "jon.trn8",
+          "nickname": "Trần Gia",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/c0cb5ac1ef649b22e1570d30714f5822~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=534a289f&x-expires=1772701200&x-signature=MVKBH%2BgJUOqegdsE%2FzNmWIIKN4Q%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 3,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000147,
+          "show_more_score": 4e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T10:59:15Z"
+      },
+      {
+        "comment_id": "7612897235500237589",
+        "content": "tui thích Iran rồi nha khoái hột nhãn bay thẳng nhà trắng mỹ tuyệt vời",
+        "author": {
+          "uid": "7280855379654755330",
+          "username": "6..8gb",
+          "nickname": "➏➑𝐠𝐛𝐯𝐧. 𝐬𝐩𝐚𝐜𝐞 húp đậm",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/422657d640231c2027504e5e710fcfaf~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=c6b6d099&x-expires=1772701200&x-signature=ZEkLSSgdegL06WHsuoJ9T4XDIfM%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 13,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 7.4e-05,
+          "show_more_score": 0.0
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T05:29:42Z"
+      },
+      {
+        "comment_id": "7612686767288730388",
+        "content": "mom",
+        "author": {
+          "uid": "7212536689758831634",
+          "username": "naman4424",
+          "nickname": "naman",
+          "avatar": "https://p16-sign-va.tiktokcdn.com/musically-maliva-obj/1594805258216454~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=f8cf84b3&x-expires=1772701200&x-signature=utP%2Fx%2F2tEPdm0Kx5Oy3FErX363g%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 15,
+        "reply_count": 5,
+        "sort_extra_score": {
+          "reply_score": 8.3e-05,
+          "show_more_score": 0.023088
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-02T15:52:53Z"
+      },
+      {
+        "comment_id": "7612917173494203137",
+        "content": "Hồi xưa cuộc chiến giữa iran và irag tôi cứ nghĩ iran là nước xấu . Giờ mới hiểu ai mới là người ép họ phải chiến đấu",
+        "author": {
+          "uid": "7525013620599112710",
+          "username": "my.m.c34",
+          "nickname": "My Mê Cá 🐬",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/adeb2541797a5aafc420bcd6d7efbc35~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=93fd53e5&x-expires=1772701200&x-signature=HFubd%2BQpcaF2o0rJ4Lp%2B8eFU9qM%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 6,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000139,
+          "show_more_score": 0.0
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T06:46:59Z"
+      },
+      {
+        "comment_id": "7612866539473519380",
+        "content": "mình cũng bị kẹt ở cần thơ, chưa về long xuyên được",
+        "author": {
+          "uid": "7423615239411516421",
+          "username": "thanh.bnh.96",
+          "nickname": "Thanh Bình 96",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/376fe29b994ad784dde636884ac1648b~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=8ba10a19&x-expires=1772701200&x-signature=KLCS%2BPmyLFBmJ3yIum%2BYWD%2BkNhE%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 3,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 4.6e-05,
+          "show_more_score": 0.0
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T03:30:31Z"
+      },
+      {
+        "comment_id": "7613043131878507280",
+        "content": "đừng dồn ai vào đường cùng . bạn sẽ thấy họ nguy hiểm thế nào",
+        "author": {
+          "uid": "7487429011553059841",
+          "username": "xng.m1",
+          "nickname": "Xương Đêm",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/24961f2050c7947ea1eaf869de6e661a~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=4c3acc84&x-expires=1772701200&x-signature=YxTLLYUcjblClF3BiKo%2BnOcBGyY%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 3,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000155,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T14:55:44Z"
+      },
+      {
+        "comment_id": "7613261906744328980",
+        "content": "nếu mỹ và iran ko dừng lại thì tôi phải để đồng chí này can thiệp",
+        "author": {
+          "uid": "6798887042383184898",
+          "username": "buidolamtrieu",
+          "nickname": "Bùi Đỗ Lam Triều",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/a99e2b3a300d071090565519c4a3e75b~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=5063aecf&x-expires=1772701200&x-signature=jtmycQPv5H6eDavEQfm%2F7c5nMPs%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 6,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000122,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T05:04:43Z"
+      },
+      {
+        "comment_id": "7613262540122030856",
+        "content": "Ê sợ một ngày nào đấy liên quan đến Việt Nam mình quá 😭😭",
+        "author": {
+          "uid": "6724590706008409089",
+          "username": "canhcutbietbay005",
+          "nickname": "canhcutbietbay005",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/4e749c11e2ee0518d0aa9e28890002c9~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=c9798ce2&x-expires=1772701200&x-signature=43JT2KkqhSux6l5xyt161TpM%2BNU%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000114,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T05:07:08Z"
+      },
+      {
+        "comment_id": "7612867691451663124",
+        "content": "giờ là chơi như tụi iran chứ hết chơi như tụi mỹ 🤡",
+        "author": {
+          "uid": "7612339103878939669",
+          "username": "no.c.b.i.tn4663",
+          "nickname": "Nào có bồ đổi tên 🤭",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/47ea9bf0ad2f043ff1c54e7f17b2313c~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=ec6b9c4b&x-expires=1772701200&x-signature=c71nMdykX1LD%2FHxZec5IEGR6atA%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 11,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 9.8e-05,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T03:35:00Z"
+      },
+      {
+        "comment_id": "7612950697827697426",
+        "content": "Kiểu như Đức quốc xã ngày xưa. Đức thì xâm lược còn iran thì phản kháng kẻ xâm lược",
+        "author": {
+          "uid": "6793444334140359682",
+          "username": "khanhmc17",
+          "nickname": "Khanharal☘️",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/d355b37945068c689544272e63267b6b~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=31aee13a&x-expires=1772701200&x-signature=zZZa9rqnnj1WEHpzbdSyxWw7CDc%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 3,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000123,
+          "show_more_score": 2e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T08:57:05Z"
+      },
+      {
+        "comment_id": "7612830642187830034",
+        "content": "Chỉ tội người dân, mong tất cả mọi người ko sao",
+        "author": {
+          "uid": "6797751798775579650",
+          "username": "bdshothuy0333972233",
+          "nickname": "Hồ thuỷ dầu tiếng ❤️❤️❤️",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/d657dddf6540ac6e8b07a366e10be526~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=3219edf2&x-expires=1772701200&x-signature=N1cFkZlj91KwYmvvj338UGWpzE0%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 12,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000459,
+          "show_more_score": 3.9e-05
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T01:11:13Z"
+      },
+      {
+        "comment_id": "7612991900890923796",
+        "content": "trong khi iran đã gép đc 15 trận cùng 1 lúc thì anh ủn vẫn đang ghép trận🥰🥰🥰",
+        "author": {
+          "uid": "7037753234606457857",
+          "username": "123456thangconao",
+          "nickname": "',:)",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/b109cf0f218522e003b6e95725ad683d~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=45500c38&x-expires=1772701200&x-signature=7J58Kq60VLiiYnyGeMyeglAdGBo%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000148,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T11:36:57Z"
+      },
+      {
+        "comment_id": "7612807217729274625",
+        "content": "Nước ai ng đó ở đi tr ơi. Cầu mong hoà bình",
+        "author": {
+          "uid": "6638080707229630466",
+          "username": "lylyn24111",
+          "nickname": "Lyn Ly",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/0eab05b3aecde97a9fdf551070f7814c~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=37271f8a&x-expires=1772701200&x-signature=YzHxj0luCIx0f9vTx7GfWP0MXCs%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 48,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 7.5e-05,
+          "show_more_score": 6e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-02T23:40:30Z"
+      },
+      {
+        "comment_id": "7613105223407010581",
+        "content": "Các nước Ả Rập nên bỏ đạo Hồi để đầu quân Do Thái thôi 😂😂😂",
+        "author": {
+          "uid": "7511636189426992136",
+          "username": "nhaphobinhtan.giare",
+          "nickname": "Nhà phố Bình Tân giá rẻ",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/3df01f90973d9e0eb052c6f710229dc9~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=c55ca73a&x-expires=1772701200&x-signature=xyllvFNRj%2Bh9Gj%2BunL7wW3bhH0I%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000149,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T18:56:49Z"
+      },
+      {
+        "comment_id": "7613246391884120850",
+        "content": "1 năm sau : ‘’ Bửa đó điên quá ‘’ 😅",
+        "author": {
+          "uid": "7226170235278640130",
+          "username": "rinzamart",
+          "nickname": "RINZA MART",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/14526bcf5d7f761e7d7bdaa0117796ed~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=314ab5b7&x-expires=1772701200&x-signature=KWqfjpmaA7J3bv1%2Fgm0mOaUumkc%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 10,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 8.8e-05,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T04:04:31Z"
+      },
+      {
+        "comment_id": "7612904382514053908",
+        "content": "thì ra nhà nc mình cấm xe xăng vì tính đến giá tăng rồi",
+        "author": {
+          "uid": "7197482991156151302",
+          "username": "hhoangghhiepp",
+          "nickname": "Hoang Hiep",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/22fd0907b676bfef27ef8fa6a888f235~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=6420b8eb&x-expires=1772701200&x-signature=EY%2BAofPNpo0fowrqHTvyNZb8YTg%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000101,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T05:57:21Z"
+      },
+      {
+        "comment_id": "7613157019247264519",
+        "content": "nhà thanh thời từ hi Thái hậu còn chx đc như thế 😳😳",
+        "author": {
+          "uid": "7353235163083555857",
+          "username": "tuimuonthiimoquatroi",
+          "nickname": "️",
+          "avatar": "https://p9-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/16c01426eae2cc7171ea519d7472af6a~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=3b678f0c&x-expires=1772701200&x-signature=exrrLcB6aQy8VJX%2FBpiNLN60eJE%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000108,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T22:17:41Z"
+      },
+      {
+        "comment_id": "7612720523654939408",
+        "content": "",
+        "author": {
+          "uid": "6783841221431428097",
+          "username": "hqngoc05",
+          "nickname": "hq Ngọc",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/8a4529f7c0a6b9784e605206e0023eca~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=25afe7a1&x-expires=1772701200&x-signature=6AhHC5o0k3KF8q0pcptxgbCC3JY%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 13,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 5.2e-05,
+          "show_more_score": 3e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-02T18:03:48Z"
+      },
+      {
+        "comment_id": "7612886152168751889",
+        "content": "Đúng chơi khô máu luôn",
+        "author": {
+          "uid": "6746162564847485953",
+          "username": "anhchangthoxay",
+          "nickname": "Anh thợ xây",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/6032b14758e55a23cf547b804347e153~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=1d9e050f&x-expires=1772701200&x-signature=oS0LwUKZHh5r7WmQJVzR4bsW6Oo%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 3,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000121,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T04:46:29Z"
+      },
+      {
+        "comment_id": "7613024198064030471",
+        "content": "Ghép rank vs TQ vs Triều Tiên đi tem 3 😂",
+        "author": {
+          "uid": "7217514445823673371",
+          "username": "68gbkk",
+          "nickname": "⑥⑧gbvn.space Siêu vip pl",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/1b04ef50150f1498de4bec55bae6b08d~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=d65d7622&x-expires=1772701200&x-signature=2N%2FvhtsKYrUVRP4u8zJu8TosLac%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000129,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T13:42:14Z"
+      },
+      {
+        "comment_id": "7613231296949338901",
+        "content": "Tui thấy ai cũng có cái đúng. Dù là lý do gì thì người khổ vẫn là dân chúng thôi",
+        "author": {
+          "uid": "6975122665524052993",
+          "username": "kinhsachdieuai",
+          "nickname": "Kinh Sách Diệu Ái",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/56d1084762f4ef694cdca92bc0f1ea8e~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=aa1d3ae5&x-expires=1772701200&x-signature=8wo7TF3%2B5xLXy0pURY6J08CuzHU%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000167,
+          "show_more_score": 3e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T03:05:59Z"
+      },
+      {
+        "comment_id": "7613188592244605717",
+        "content": "Cầu xin cho tất cả ngừoi dân được Bình An🙏 chiến tranh kết thúc🙏🙏",
+        "author": {
+          "uid": "7294453248329008136",
+          "username": "thansohoc_pytago1",
+          "nickname": "Huế Tích Cực",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/ec6093413bdb7e73ccbdf7269533aefb~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=ed35d80f&x-expires=1772701200&x-signature=eA7yVzW%2Fcb7UE84PvxvUAXPMA80%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 4.7e-05,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T00:20:16Z"
+      },
+      {
+        "comment_id": "7613189082374390549",
+        "content": "Hôm qua t vừa xem xăng dầu tím lịm luôn😂",
+        "author": {
+          "uid": "7535778641562256405",
+          "username": "baonamvuivee",
+          "nickname": "Bảo Nam Vui Vẻ💎",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/4ec4c7782169023c6fbfc1861ac852f1~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=578a2fdc&x-expires=1772701200&x-signature=YbGrQE%2FkG4bwPv%2FDjnoJlpZVzdU%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000126,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T00:22:14Z"
+      },
+      {
+        "comment_id": "7612874733357859592",
+        "content": "Kiểu gì iran cũng chơi hột nhãn kiểu tất tất",
+        "author": {
+          "uid": "7242693778569495557",
+          "username": "phmhng8216",
+          "nickname": "Anh chú",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/3a3af0929870f60f538d97de6beb5d52~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=a3467759&x-expires=1772701200&x-signature=YalEhkf%2FtmFlmrDwnoQ8L1eEbI8%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 0,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000201,
+          "show_more_score": 8e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T04:02:22Z"
+      },
+      {
+        "comment_id": "7612949849868534545",
+        "content": "MÌNH HIỂU NHƯ KIỂU; TAO NHỊN MÀY LÂU LẮM RỒI ĐẤY ????kkk",
+        "author": {
+          "uid": "7329394585438897158",
+          "username": "helo12932",
+          "nickname": "helo12",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/7bf715d75c356f336a9f64f0d154a0db~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=f08f0ba3&x-expires=1772701200&x-signature=lnNxpgnzeQZDSG%2BPRVii8tLSDu0%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 0.000126,
+          "show_more_score": 2e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T08:53:43Z"
+      },
+      {
+        "comment_id": "7612878622366106386",
+        "content": "cố lên lran",
+        "author": {
+          "uid": "6598368087426613250",
+          "username": "annale176",
+          "nickname": "An Na Le",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/d339b4dbd2311b20b1e64f15c187fec9~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=5f180f58&x-expires=1772701200&x-signature=Jmnuo2QMTNMzK72%2BqOCCro%2F2Elo%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 9,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 7.9e-05,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T04:17:22Z"
+      },
+      {
+        "comment_id": "7612897385430532865",
+        "content": "tui chỉ quan tâm giá xăng thôi, cái đó là nhu cầu hằng ngày kkk",
+        "author": {
+          "uid": "6999058878085432321",
+          "username": "manhtuan_0506",
+          "nickname": "Bụi Đời Công Sở",
+          "avatar": "https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/ae7a852584d2ee205c0610d450ab3cfd~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=57d7daa6&x-expires=1772701200&x-signature=H7QaF26rLXw6C5ynoqdIR3ETxjI%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 2,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 7.3e-05,
+          "show_more_score": 0.0
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-03T05:30:13Z"
+      },
+      {
+        "comment_id": "7613251116708446983",
+        "content": "Tội cho người dân vô tội thôi",
+        "author": {
+          "uid": "83084008501",
+          "username": "minhkhoibonsai",
+          "nickname": "Minh Khôi Bonsai",
+          "avatar": "https://p9-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/b50acedb80c56a30dac6396b3853ac52~tplv-tiktokx-cropcenter:100:100.jpg?dr=14579&refresh_token=2708204a&x-expires=1772701200&x-signature=%2BzL%2FiBZ9Hv%2Bxi1MSW9S%2FOjWN%2BY4%3D&t=4d5b0474&ps=13740610&shp=30310797&shcp=ff37627b&idc=my"
+        },
+        "likes_count": 1,
+        "reply_count": 0,
+        "sort_extra_score": {
+          "reply_score": 8.3e-05,
+          "show_more_score": 1e-06
+        },
+        "reply_comments": null,
+        "commented_at": "2026-03-04T04:22:46Z"
+      }
+    ]
+  },
+  "error": null
+}

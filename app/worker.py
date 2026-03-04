@@ -131,7 +131,8 @@ class Worker:
     def _save_result(self, result: TaskResult) -> None:
         """Save task result to output/ as JSON file."""
         timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-        filename = f"{result.action}_{result.task_id[:8]}_{timestamp}.json"
+        queue_short = result.queue.replace("_tasks", "")
+        filename = f"{queue_short}_{result.action}_{result.task_id[:8]}_{timestamp}.json"
         filepath = os.path.join(self.settings.OUTPUT_DIR, filename)
 
         with open(filepath, "w", encoding="utf-8") as f:
