@@ -1,0 +1,15 @@
+# FastAPI & Server
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic-settings==2.7.1
+
+# RabbitMQ (async)
+aio-pika==9.5.4
+
+# Logging
+loguru==0.7.3
+
+# Utils
+python-dotenv==1.0.1
+
+# SDK: pip install -e ../sdk
