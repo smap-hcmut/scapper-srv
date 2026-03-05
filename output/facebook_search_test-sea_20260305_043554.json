@@ -1,0 +1,16 @@
+{
+  "task_id": "test-search-10",
+  "queue": "facebook_tasks",
+  "action": "search",
+  "params": {
+    "keywords": [
+      "review iphone",
+      "unbox"
+    ]
+  },
+  "created_at": "",
+  "completed_at": "2026-03-05T04:35:54.622733+00:00",
+  "status": "success",
+  "result": [],
+  "error": null
+}

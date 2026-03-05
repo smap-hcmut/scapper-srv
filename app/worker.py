@@ -49,6 +49,7 @@ class Worker:
             base_url=self.settings.API_BASE_URL,
             api_key=self.settings.API_KEY,
             timeout=120.0,
+            secret_key=self.settings.API_SECRET_KEY,
         )
 
         self._connection = await aio_pika.connect_robust(self.settings.RABBITMQ_URL)

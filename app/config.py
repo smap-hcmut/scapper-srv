@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     # TinLikeSub API (main API this worker calls via SDK)
     API_BASE_URL: str = "http://localhost:8104"
     API_KEY: str = ""
+    API_SECRET_KEY: str = ""
 
     # Worker
     WORKER_PREFETCH_COUNT: int = 1
