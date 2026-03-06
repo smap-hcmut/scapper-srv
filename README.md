@@ -16,7 +16,7 @@ Async task worker xử lý các tác vụ crawl dữ liệu từ TikTok, Faceboo
 cd scapper-srv
 
 # Install SDK (file .whl được cung cấp riêng)
-pip install tinlikesub-0.1.0-py3-none-any.whl
+pip install tinlikesub-0.1.1-py3-none-any.whl
 
 # Install dependencies
 pip install -r requirements.txt

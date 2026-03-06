@@ -50,39 +50,45 @@ Durable: Yes | Delivery: Persistent (`delivery_mode = 2`)
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
-| `url` | **Có** | `string` | — | URL video TikTok |
+| `urls` | **Có** | `string[]` | — | Danh sách URL video TikTok (batch, max 5 parallel) |
+
+> Backward compat: `"url": "..."` (single string) vẫn hoạt động.
 
 ```json
-{"task_id":"test-0002","action":"post_detail","params":{"url":"https://www.tiktok.com/@user/video/1234567890"},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0002","action":"post_detail","params":{"urls":["https://www.tiktok.com/@user/video/1234567890","https://www.tiktok.com/@user/video/9876543210"]},"created_at":"2026-03-04T00:00:00"}
 ```
 
 ### `comments`
 
-Lấy danh sách comments của video.
+Lấy danh sách comments của video (batch).
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
-| `video_url` | **Có*** | `string` | — | URL video TikTok |
-| `aweme_id` | **Có*** | `string` | — | ID video. *Một trong hai bắt buộc, ưu tiên `video_url`* |
+| `video_urls` | **Có*** | `string[]` | — | Danh sách URL video TikTok |
+| `aweme_ids` | **Có*** | `string[]` | — | Danh sách ID video. *Một trong hai bắt buộc, ưu tiên `video_urls`* |
 | `cursor` | Không | `int` | `0` | Vị trí phân trang |
-| `count` | Không | `int` | `50` | Số comment cần lấy |
+| `count` | Không | `int` | `50` | Số comment cần lấy per post |
 | `threshold` | Không | `float` | `null` | Ngưỡng tự lấy replies |
 
+> Backward compat: `"video_url": "..."` hoặc `"aweme_id": "..."` (single string) vẫn hoạt động.
+
 ```json
-{"task_id":"test-0003","action":"comments","params":{"video_url":"https://www.tiktok.com/@user/video/7612600015135034644","count":50,"threshold":0.5},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0003","action":"comments","params":{"video_urls":["https://www.tiktok.com/@user/video/7612600015135034644"],"count":50,"threshold":0.5},"created_at":"2026-03-04T00:00:00"}
 ```
 
 ### `summary`
 
-Lấy thông tin tóm tắt video (title, description, keywords).
+Lấy thông tin tóm tắt video (title, description, keywords) — batch.
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
-| `video_url` | **Có*** | `string` | — | URL video TikTok |
-| `item_id` | **Có*** | `string` | — | ID video. *Một trong hai bắt buộc, ưu tiên `video_url`* |
+| `video_urls` | **Có*** | `string[]` | — | Danh sách URL video TikTok |
+| `item_ids` | **Có*** | `string[]` | — | Danh sách ID video. *Một trong hai bắt buộc, ưu tiên `video_urls`* |
+
+> Backward compat: `"video_url": "..."` hoặc `"item_id": "..."` (single string) vẫn hoạt động.
 
 ```json
-{"task_id":"test-0010","action":"summary","params":{"video_url":"https://www.tiktok.com/@user/video/7612600015135034644"},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0010","action":"summary","params":{"video_urls":["https://www.tiktok.com/@user/video/7612600015135034644"]},"created_at":"2026-03-04T00:00:00"}
 ```
 
 ### `comment_replies`
@@ -156,17 +162,19 @@ Tự động: tìm kiếm → lấy chi tiết → lấy comments cho mỗi kế
 
 ### `post_detail`
 
-Lấy chi tiết bài viết.
+Lấy chi tiết bài viết (batch).
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
-| `parse_id` | **Có** | `string` | — | Post parse_id |
+| `parse_ids` | **Có** | `string[]` | — | Danh sách post parse_id |
+
+> Backward compat: `"parse_id": "..."` (single string) vẫn hoạt động.
 
 ```json
-{"task_id":"test-0012","action":"post_detail","params":{"parse_id":"pfbid02ABC123"},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0012","action":"post_detail","params":{"parse_ids":["pfbid02ABC123","pfbid02XYZ456"]},"created_at":"2026-03-04T00:00:00"}
 ```
 
-### `comments`
+### `comments (not yet)`
 
 Lấy comments của bài viết.
 

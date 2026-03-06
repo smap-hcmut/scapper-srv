@@ -23,9 +23,10 @@ async def handle_posts(client: TinLikeSubClient, params: dict) -> Any:
 
 
 async def handle_post_detail(client: TinLikeSubClient, params: dict) -> Any:
-    parse_id = params["parse_id"]
-    logger.info(f"[Facebook] post_detail: parse_id={parse_id}")
-    return await client.facebook.get_post_detail(parse_id=parse_id)
+    # Accept "parse_ids" (list) or "parse_id" (single, backward compat)
+    parse_ids = params.get("parse_ids") or [params["parse_id"]]
+    logger.info(f"[Facebook] post_detail: {len(parse_ids)} id(s)")
+    return await client.facebook.get_post_detail(parse_ids=parse_ids)
 
 
 async def handle_comments(client: TinLikeSubClient, params: dict) -> Any:
