@@ -14,7 +14,9 @@ from tinlikesub import TinLikeSubClient
 
 from app.config import get_settings
 from app.handlers import QUEUE_HANDLERS, QUEUE_PLATFORMS
-from app.schemas import TaskResult
+from app.publisher import publish_completion
+from app.schemas import TaskResult, CompletionEnvelope
+from app.storage import save_result_data
 
 
 class Worker:
@@ -63,7 +65,7 @@ class Worker:
             )
             logger.info(f"Consuming from queue: {queue_name}")
 
-        logger.info(f"Worker started. Queues: {self._queue_names}")
+        logger.info(f"Worker started. Mode: {self.settings.MODE}. Queues: {self._queue_names}")
 
     async def stop(self) -> None:
         """Gracefully shut down."""
@@ -98,7 +100,7 @@ class Worker:
                 if handler is None:
                     error_msg = f"Unknown action '{action}' for queue '{queue_name}'"
                     logger.error(error_msg)
-                    self._save_result(TaskResult(
+                    await self._handle_result(TaskResult(
                         task_id=task_id, queue=queue_name, action=action,
                         params=params, created_at=created_at,
                         completed_at=datetime.now(timezone.utc).isoformat(),
@@ -109,17 +111,25 @@ class Worker:
                 # Execute
                 result = await handler(self._client, params)
 
-                self._save_result(TaskResult(
+                # Count items
+                item_count = 0
+                if isinstance(result, list):
+                    item_count = len(result)
+                elif isinstance(result, dict):
+                    # For tiktok full_flow or similar
+                    item_count = result.get("total_posts") or result.get("item_count") or 1
+
+                await self._handle_result(TaskResult(
                     task_id=task_id, queue=queue_name, action=action,
                     params=params, created_at=created_at,
                     completed_at=datetime.now(timezone.utc).isoformat(),
-                    status="success", result=result,
+                    status="success", result=result, item_count=item_count
                 ))
                 logger.info(f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}")
 
             except Exception as e:
                 logger.exception(f"[{queue_name}] Error processing message: {e}")
-                self._save_result(TaskResult(
+                await self._handle_result(TaskResult(
                     task_id=body.get("task_id", "unknown"),
                     queue=queue_name,
                     action=body.get("action", "unknown"),
@@ -129,14 +139,43 @@ class Worker:
                     status="error", error=str(e),
                 ))
 
-    def _save_result(self, result: TaskResult) -> None:
-        """Save task result to output/ as JSON file."""
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-        queue_short = result.queue.replace("_tasks", "")
-        filename = f"{queue_short}_{result.action}_{result.task_id[:8]}_{timestamp}.json"
-        filepath = os.path.join(self.settings.OUTPUT_DIR, filename)
+    async def _handle_result(self, result: TaskResult) -> None:
+        """Save result to storage and publish completion to ingest-srv."""
+        platform = QUEUE_PLATFORMS.get(result.queue, "unknown")
+        
+        # 1. Save to Storage (Local or MinIO)
+        storage_meta = await save_result_data(
+            task_id=result.task_id,
+            platform=platform,
+            action=result.action,
+            result_dict=result.model_dump()
+        )
+        
+        # Update result object with storage info
+        result.storage_bucket = storage_meta.get("storage_bucket")
+        result.storage_path = storage_meta.get("storage_path")
+        result.batch_id = storage_meta.get("batch_id")
+        result.checksum = storage_meta.get("checksum")
 
-        with open(filepath, "w", encoding="utf-8") as f:
-            json.dump(result.model_dump(), f, ensure_ascii=False, indent=2, default=str)
-
-        logger.info(f"Result saved: {filepath}")
+        # 2. Publish Completion Envelope to RabbitMQ
+        # Following RABBITMQ.md contract
+        completion = CompletionEnvelope(
+            task_id=result.task_id,
+            queue=result.queue,
+            platform=platform,
+            action=result.action,
+            status=result.status,
+            completed_at=result.completed_at,
+            storage_bucket=result.storage_bucket,
+            storage_path=result.storage_path,
+            batch_id=result.batch_id,
+            checksum=result.checksum,
+            item_count=result.item_count,
+            error=result.error,
+            metadata={
+                "crawler_version": self.settings.APP_VERSION,
+                "mode": self.settings.MODE
+            }
+        )
+        
+        await publish_completion(completion.model_dump())

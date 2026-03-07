@@ -40,6 +40,23 @@ async def publish_task(queue_name: str, payload: dict) -> None:
     )
 
 
+async def publish_completion(payload: dict) -> None:
+    """Publish a completion message to ingest_task_completions queue."""
+    queue_name = "ingest_task_completions"
+    channel = await get_channel()
+    await channel.declare_queue(queue_name, durable=True)
+    message = Message(
+        body=json.dumps(payload, ensure_ascii=False).encode(),
+        delivery_mode=DeliveryMode.PERSISTENT,
+        content_type="application/json",
+    )
+    await channel.default_exchange.publish(message, routing_key=queue_name)
+    logger.info(
+        f"Published completion to {queue_name}: task_id={payload.get('task_id', '')[:8]} "
+        f"status={payload.get('status')}"
+    )
+
+
 async def close_publisher() -> None:
     """Close publisher connection (called on shutdown)."""
     global _connection, _channel

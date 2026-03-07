@@ -11,5 +11,6 @@ loguru==0.7.3
 
 # Utils
 python-dotenv==1.0.1
+aioboto3==13.2.0
 
 # SDK: pip install -e ../sdk

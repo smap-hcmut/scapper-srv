@@ -38,7 +38,7 @@ class SubmitTaskResponse(BaseModel):
 
 
 class TaskResult(BaseModel):
-    """JSON structure saved to output/ files."""
+    """JSON structure saved to output/ files or MinIO raw artifact."""
 
     task_id: str
     queue: str
@@ -49,3 +49,28 @@ class TaskResult(BaseModel):
     status: str = "success"
     result: Any = None
     error: str | None = None
+    
+    # Metadata for ingest-srv
+    item_count: int = 0
+    storage_bucket: str | None = None
+    storage_path: str | None = None
+    batch_id: str | None = None
+    checksum: str | None = None
+
+
+class CompletionEnvelope(BaseModel):
+    """Message payload published to ingest_task_completions queue."""
+
+    task_id: str
+    queue: str
+    platform: str
+    action: str
+    status: str
+    completed_at: str
+    storage_bucket: str | None = None
+    storage_path: str | None = None
+    batch_id: str | None = None
+    checksum: str | None = None
+    item_count: int = 0
+    error: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
