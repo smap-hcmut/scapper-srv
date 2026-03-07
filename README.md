@@ -2,6 +2,30 @@
 
 Async task worker xử lý các tác vụ crawl dữ liệu từ TikTok, Facebook và YouTube thông qua RabbitMQ.
 
+## Document Status
+- **Status:** Active runtime README
+- **Canonical RabbitMQ contract:** `/mnt/f/SMAP_v2/scapper-srv/RABBITMQ.md`
+- **Canonical shared runtime contract:** `/mnt/f/SMAP_v2/ingest-srv/documents/plan/scapper_ingest_shared_runtime_contract_proposal.md`
+- **Historical cross-service reference:** `/mnt/f/SMAP_v2/cross-service-docs/proposal_chuan_hoa_docs_3_service_v1.md`
+- **Last updated:** 08/03/2026
+
+## Implementation Status Snapshot
+
+| Hạng mục | Trạng thái |
+|---|---|
+| RabbitMQ worker consume `tiktok_tasks/facebook_tasks/youtube_tasks` | Implemented |
+| Submit task API `/api/v1/tasks/{platform}` | Implemented |
+| Task result APIs (`/tasks/{task_id}/result`, `/tasks`) | Implemented |
+| Local debug output `output/*.json` | Implemented |
+| MinIO raw upload theo production contract | Not implemented yet |
+| RabbitMQ completion publish `-> ingest_task_completions` | Not implemented yet |
+
+## Documentation Map
+
+- Dùng [RABBITMQ.md](RABBITMQ.md) khi cần queue name, request envelope, completion envelope, action payload shape.
+- Dùng shared runtime contract ở `/mnt/f/SMAP_v2/ingest-srv/documents/plan/scapper_ingest_shared_runtime_contract_proposal.md` khi cần MinIO naming, idempotency, recovery rules, `POST_URL` orchestration.
+- Giữ `output/*.json` và debug APIs cho local/dev workflow; chúng không còn là production handoff contract.
+
 ## Setup
 
 ### Prerequisites
@@ -79,3 +103,10 @@ Kết quả lưu tại `output/` với format: `{platform}_{action}_{task_id}_{t
   "error": null
 }
 ```
+
+Ghi chú:
+
+- đây là debug/local artifact
+- production handoff chuẩn giữa `scapper-srv` và `ingest-srv` là:
+  - raw artifact trên MinIO
+  - completion message trên RabbitMQ queue `ingest_task_completions`
