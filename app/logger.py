@@ -1,3 +1,4 @@
+import logging
 import sys
 from contextvars import ContextVar
 from typing import Optional
@@ -6,6 +7,22 @@ from contextlib import contextmanager
 
 # Trace ID context variable
 _trace_id_var: ContextVar[Optional[str]] = ContextVar("trace_id", default=None)
+
+class InterceptHandler(logging.Handler):
+    def emit(self, record):
+        # Get corresponding Loguru level if it exists
+        try:
+            level = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+
+        # Find caller from where originated the logged message
+        frame, depth = logging.currentframe(), 2
+        while frame.f_code.co_filename == logging.__file__:
+            frame = frame.f_back
+            depth += 1
+
+        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
 def get_trace_id() -> Optional[str]:
     return _trace_id_var.get()
@@ -27,12 +44,20 @@ def setup_logging(debug: bool = False):
 
     level = "DEBUG" if debug else "INFO"
     
+    def should_filter(record):
+        # Filter out Kubernetes health check spam
+        message = record["message"]
+        if "/scraper/health" in message:
+            return False
+        return True
+
     if not debug:
         # Production: Use JSON serialization
         logger.add(
             sys.stdout,
             serialize=True,
             level=level,
+            filter=should_filter,
         )
     else:
         # Development: Use human-readable format
@@ -49,8 +74,14 @@ def setup_logging(debug: bool = False):
             colorize=True,
             backtrace=True,
             diagnose=True,
+            filter=should_filter,
         )
     
+    # Intercept all logs from standard logging
+    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+    for name in ["uvicorn", "uvicorn.access", "uvicorn.error", "fastapi"]:
+        _logger = logging.getLogger(name)
+        _logger.handlers = [InterceptHandler()]
+        _logger.propagate = False
+
     logger.info(f"Logging initialized at {level} level (JSON={not debug})")
-    
-    logger.info(f"Logging initialized at {level} level")
