@@ -59,15 +59,4 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-          livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - ps aux | grep -v grep | grep -q "worker.py"
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
       terminationGracePeriodSeconds: 30
