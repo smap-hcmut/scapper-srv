@@ -1,0 +1,32 @@
+# Traefik Middleware for stripping /scraper prefix
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: scraper-stripprefix
+  namespace: smap
+spec:
+  stripPrefix:
+    prefixes:
+      - /scraper
+
+---
+# Traefik IngressRoute for scapper API
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: scraper-ingress
+  namespace: smap
+  labels:
+    app.kubernetes.io/name: scraper
+    app.kubernetes.io/part-of: smap
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`smap-api.tantai.dev`) && PathPrefix(`/scraper`)
+      kind: Rule
+      services:
+        - name: scapper-api
+          port: 80
+      middlewares:
+        - name: scraper-stripprefix
