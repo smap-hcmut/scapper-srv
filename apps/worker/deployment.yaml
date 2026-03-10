@@ -28,14 +28,14 @@ spec:
         - name: harbor-registry
       containers:
         - name: scapper-worker
-          image: registry.tantai.dev/smap/scapper:260310-205842
+          image: registry.tantai.dev/smap/scapper:260310-221911
           imagePullPolicy: IfNotPresent
           # Override CMD to run standalone worker (consumes all 3 platform queues)
           command: ["python", "worker.py", "tiktok", "facebook", "youtube"]
           resources:
             requests:
               memory: "256Mi"
-              cpu: "100m"
+              cpu: "200m"
             limits:
               memory: "1Gi"
               cpu: "1000m"

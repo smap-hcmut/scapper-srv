@@ -1,5 +1,9 @@
 import logging
 import sys
+import os
+import json
+import email.utils
+from datetime import timezone, timedelta
 from contextvars import ContextVar
 from typing import Optional
 from loguru import logger
@@ -51,11 +55,32 @@ def setup_logging(debug: bool = False):
             return False
         return True
 
+    service_name = os.getenv("CONTAINER_NAME", "scapper-srv")
+
+    ict_tz = timezone(timedelta(hours=7))
+
+    def custom_json_sink(message):
+        record = message.record
+        dt = record["time"].astimezone(ict_tz)
+        log_dict = {
+            "timestamp": email.utils.format_datetime(dt),
+            "trace_id": record["extra"].get("trace_id", ""),
+            "level": record["level"].name.lower(),
+            "caller": f"{record['file'].name}:{record['line']}",
+            "message": record["message"],
+            "service": service_name,
+        }
+        # Include extra fields
+        for key, value in record["extra"].items():
+            if key != "trace_id" and key not in log_dict:
+                log_dict[key] = value
+        
+        print(json.dumps(log_dict), flush=True)
+
     if not debug:
-        # Production: Use JSON serialization
+        # Production: Use custom JSON sink for standardized flattened output
         logger.add(
-            sys.stdout,
-            serialize=True,
+            custom_json_sink,
             level=level,
             filter=should_filter,
         )

@@ -28,7 +28,7 @@ spec:
         - name: harbor-registry
       containers:
         - name: scapper-api
-          image: registry.tantai.dev/smap/scapper:260310-211224
+          image: registry.tantai.dev/smap/scapper:260310-221911
           imagePullPolicy: IfNotPresent
           command: ["python", "run_api.py"]
           ports:
@@ -38,7 +38,7 @@ spec:
           resources:
             requests:
               memory: "256Mi"
-              cpu: "100m"
+              cpu: "200m"
             limits:
               memory: "1Gi"
               cpu: "1000m"
