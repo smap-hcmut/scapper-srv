@@ -97,7 +97,7 @@ Kết quả lưu tại `output/` với format: `{platform}_{action}_{task_id}_{t
 ```json
 {
   "task_id": "a1b2c3d4-...",
-  "action": "search",
+  "action": "full_flow",
   "status": "success",
   "result": { ... },
   "error": null

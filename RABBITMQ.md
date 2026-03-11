@@ -98,8 +98,8 @@ Các phần đó thuộc companion doc:
   "status": "success|error",
   "completed_at": "2026-03-08T00:00:15Z",
   "storage_bucket": "ingest-raw",
-  "storage_path": "crawl-raw/tiktok/search/2026/03/08/uuid.json",
-  "batch_id": "raw-tiktok-search-uuid",
+  "storage_path": "crawl-raw/tiktok/full_flow/2026/03/08/uuid.json",
+  "batch_id": "raw-tiktok-full_flow-uuid",
   "checksum": "sha256:...",
   "item_count": 2,
   "error": null,
@@ -254,6 +254,8 @@ Kiểm tra trạng thái cookie.
 #### `full_flow`
 
 Tự động: tìm kiếm -> lấy chi tiết -> lấy comments cho mỗi kết quả.
+
+> Canonical ingest integration: grouped TikTok keyword targets may be fanned out by `ingest-srv` thành nhiều `full_flow` tasks, mỗi task mang đúng một `params.keyword`.
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
@@ -426,7 +428,7 @@ POST /api/v1/tasks/{platform}
 Body:
 
 ```json
-{ "action": "search", "params": { "keywords": ["review"] } }
+{ "action": "full_flow", "params": { "keyword": "review" } }
 ```
 
 Response:
@@ -435,7 +437,7 @@ Response:
 {
   "message": "Task submitted",
   "task_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "action": "search",
+  "action": "full_flow",
   "queue": "tiktok_tasks"
 }
 ```
@@ -458,7 +460,7 @@ GET /api/v1/tasks?limit=20
 
 Filename: `{queue}_{action}_{task_id[:8]}_{timestamp}.json`
 
-Ví dụ: `tiktok_search_a1b2c3d4_20260304_150000.json`
+Ví dụ: `tiktok_full_flow_a1b2c3d4_20260304_150000.json`
 
 ```json
 {

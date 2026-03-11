@@ -19,54 +19,54 @@ from app.schemas import TaskPayload
 
 TEST_SCENARIOS = [
     # 1. TIKTOK - Fully integrated flow
+    # {
+    #     "platform": "tiktok",
+    #     "queue": "tiktok_tasks",
+    #     "action": "full_flow",
+    #     "params": {
+    #         "keyword": "vinfast vf8 review",
+    #         "limit": 50,
+    #         "comment_count": 1000,
+    #         "threshold": 0  # 0 means fetch replies for ANY comment that has them
+    #     }
+    # },
+    # 2. FACEBOOK - Post Detail
     {
-        "platform": "tiktok",
-        "queue": "tiktok_tasks",
-        "action": "full_flow",
+        "platform": "facebook",
+        "queue": "facebook_tasks",
+        "action": "post_detail",
         "params": {
-            "keyword": "vinfast vf8 review",
-            "limit": 50,
-            "comment_count": 1000,
-            "threshold": 0  # 0 means fetch replies for ANY comment that has them
+            "parse_ids": ["100069153349307_pfbid0m6dmZhdGq59QT1DQY7m6Cp8cNDc1eiAT29prRfnJegdwwz1VLYj9ovStdyarETm4l"]
         }
     },
-    # # 2. FACEBOOK - Post Detail
-    # {
-    #     "platform": "facebook",
-    #     "queue": "facebook_tasks",
-    #     "action": "post_detail",
-    #     "params": {
-    #         "parse_ids": ["100069153349307_pfbid0m6dmZhdGq59QT1DQY7m6Cp8cNDc1eiAT29prRfnJegdwwz1VLYj9ovStdyarETm4l"]
-    #     }
-    # },
-    # # 3. FACEBOOK - Comments (Graph API)
-    # {
-    #     "platform": "facebook",
-    #     "queue": "facebook_tasks",
-    #     "action": "comments_graphql_batch",
-    #     "params": {
-    #         "post_ids": ["100069153349307_pfbid0m6dmZhdGq59QT1DQY7m6Cp8cNDc1eiAT29prRfnJegdwwz1VLYj9ovStdyarETm4l"],
-    #         "count": 30
-    #     }
-    # },
-    # # 4. YOUTUBE - Video Detail
-    # {
-    #     "platform": "youtube",
-    #     "queue": "youtube_tasks",
-    #     "action": "video_detail",
-    #     "params": {
-    #         "video_id": "dQw4w9WgXcQ"
-    #     }
-    # },
-    # # 5. YOUTUBE - Comments
-    # {
-    #     "platform": "youtube",
-    #     "queue": "youtube_tasks",
-    #     "action": "comments",
-    #     "params": {
-    #         "video_id": "dQw4w9WgXcQ"
-    #     }
-    # }
+    # 3. FACEBOOK - Comments (Graph API)
+    {
+        "platform": "facebook",
+        "queue": "facebook_tasks",
+        "action": "comments_graphql_batch",
+        "params": {
+            "post_ids": ["100069153349307_pfbid0m6dmZhdGq59QT1DQY7m6Cp8cNDc1eiAT29prRfnJegdwwz1VLYj9ovStdyarETm4l"],
+            "count": 30
+        }
+    },
+    # 4. YOUTUBE - Video Detail
+    {
+        "platform": "youtube",
+        "queue": "youtube_tasks",
+        "action": "video_detail",
+        "params": {
+            "video_id": "dQw4w9WgXcQ"
+        }
+    },
+    # 5. YOUTUBE - Comments
+    {
+        "platform": "youtube",
+        "queue": "youtube_tasks",
+        "action": "comments",
+        "params": {
+            "video_id": "dQw4w9WgXcQ"
+        }
+    }
 ]
 
 async def run_comprehensive_tests():
