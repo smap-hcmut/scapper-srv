@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scapper-config
+  namespace: smap
+  labels:
+    app: scapper-api
+data:
+  MODE: "production"
+  DEBUG: "false"
+
+  # RabbitMQ (in-cluster service)
+  RABBITMQ_URL: "amqp://CHANGE_ME:CHANGE_ME@rabbitmq.rabbitmq.svc.cluster.local:5672/"
+
+  # TinLikeSub external API
+  API_BASE_URL: "https://api.tinlikesub.pro"
+
+  # Worker tuning
+  WORKER_PREFETCH_COUNT: "1"
+
+  # Output dir (ephemeral)
+  OUTPUT_DIR: "/tmp/output"
+
+  # MinIO (external VM)
+  MINIO_ENDPOINT: "CHANGE_ME:9000"
+  MINIO_BUCKET: "ingest-data"
+  MINIO_USE_SSL: "false"
+  MINIO_REGION: "us-east-1"

@@ -14,8 +14,9 @@ from tinlikesub import TinLikeSubClient
 
 from app.config import get_settings
 from app.handlers import QUEUE_HANDLERS, QUEUE_PLATFORMS
+from app.logger import trace_context
 from app.publisher import publish_completion
-from app.schemas import TaskResult, CompletionEnvelope
+from app.schemas import CompletionEnvelope, TaskResult
 from app.storage import save_result_data
 
 
@@ -83,74 +84,92 @@ class Worker:
     ) -> None:
         """Process a single message from a queue."""
         body: dict[str, Any] = {}
+
+        # Extract trace_id from headers
+        headers = message.headers or {}
+        trace_id = headers.get("X-Trace-Id")
+        if isinstance(trace_id, bytes):
+            trace_id = trace_id.decode(errors="ignore")
+
         async with message.process():
-            try:
-                body = json.loads(message.body.decode())
-                task_id = body.get("task_id", "unknown")
-                action = body.get("action", "unknown")
-                params = body.get("params", {})
-                created_at = body.get("created_at", "")
+            with trace_context(trace_id=trace_id):
+                try:
+                    body = json.loads(message.body.decode())
+                    task_id = body.get("task_id", "unknown")
+                    action = body.get("action", "unknown")
+                    params = body.get("params", {})
+                    created_at = body.get("created_at", "")
 
-                logger.info(f"[{queue_name}] Received: action={action} task_id={task_id[:8]}")
+                    logger.info(f"[{queue_name}] Received: action={action} task_id={task_id[:8]}")
 
-                # Find handler
-                handlers = QUEUE_HANDLERS.get(queue_name, {})
-                handler = handlers.get(action)
+                    # Find handler
+                    handlers = QUEUE_HANDLERS.get(queue_name, {})
+                    handler = handlers.get(action)
 
-                if handler is None:
-                    error_msg = f"Unknown action '{action}' for queue '{queue_name}'"
-                    logger.error(error_msg)
+                    if handler is None:
+                        error_msg = f"Unknown action '{action}' for queue '{queue_name}'"
+                        logger.error(error_msg)
+                        await self._handle_result(TaskResult(
+                            task_id=task_id,
+                            queue=queue_name,
+                            action=action,
+                            params=params,
+                            created_at=created_at,
+                            completed_at=datetime.now(timezone.utc).isoformat(),
+                            status="error",
+                            error=error_msg,
+                        ))
+                        return
+
+                    # Execute
+                    result = await handler(self._client, params)
+
+                    # Count items
+                    item_count = 0
+                    if isinstance(result, list):
+                        item_count = len(result)
+                    elif isinstance(result, dict):
+                        # For tiktok full_flow or similar
+                        item_count = result.get("total_posts") or result.get("item_count") or 1
+
                     await self._handle_result(TaskResult(
-                        task_id=task_id, queue=queue_name, action=action,
-                        params=params, created_at=created_at,
+                        task_id=task_id,
+                        queue=queue_name,
+                        action=action,
+                        params=params,
+                        created_at=created_at,
                         completed_at=datetime.now(timezone.utc).isoformat(),
-                        status="error", error=error_msg,
+                        status="success",
+                        result=result,
+                        item_count=item_count,
                     ))
-                    return
+                    logger.info(f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}")
 
-                # Execute
-                result = await handler(self._client, params)
-
-                # Count items
-                item_count = 0
-                if isinstance(result, list):
-                    item_count = len(result)
-                elif isinstance(result, dict):
-                    # For tiktok full_flow or similar
-                    item_count = result.get("total_posts") or result.get("item_count") or 1
-
-                await self._handle_result(TaskResult(
-                    task_id=task_id, queue=queue_name, action=action,
-                    params=params, created_at=created_at,
-                    completed_at=datetime.now(timezone.utc).isoformat(),
-                    status="success", result=result, item_count=item_count
-                ))
-                logger.info(f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}")
-
-            except Exception as e:
-                logger.exception(f"[{queue_name}] Error processing message: {e}")
-                await self._handle_result(TaskResult(
-                    task_id=body.get("task_id", "unknown"),
-                    queue=queue_name,
-                    action=body.get("action", "unknown"),
-                    params=body.get("params", {}),
-                    created_at=body.get("created_at", ""),
-                    completed_at=datetime.now(timezone.utc).isoformat(),
-                    status="error", error=str(e),
-                ))
+                except Exception as e:
+                    logger.exception(f"[{queue_name}] Error processing message: {e}")
+                    await self._handle_result(TaskResult(
+                        task_id=body.get("task_id", "unknown"),
+                        queue=queue_name,
+                        action=body.get("action", "unknown"),
+                        params=body.get("params", {}),
+                        created_at=body.get("created_at", ""),
+                        completed_at=datetime.now(timezone.utc).isoformat(),
+                        status="error",
+                        error=str(e),
+                    ))
 
     async def _handle_result(self, result: TaskResult) -> None:
         """Save result to storage and publish completion to ingest-srv."""
         platform = QUEUE_PLATFORMS.get(result.queue, "unknown")
-        
+
         # 1. Save to Storage (Local or MinIO)
         storage_meta = await save_result_data(
             task_id=result.task_id,
             platform=platform,
             action=result.action,
-            result_dict=result.model_dump()
+            result_dict=result.model_dump(),
         )
-        
+
         # Update result object with storage info
         result.storage_bucket = storage_meta.get("storage_bucket")
         result.storage_path = storage_meta.get("storage_path")
@@ -174,8 +193,8 @@ class Worker:
             error=result.error,
             metadata={
                 "crawler_version": self.settings.APP_VERSION,
-                "mode": self.settings.MODE
-            }
+                "mode": self.settings.MODE,
+            },
         )
-        
+
         await publish_completion(completion.model_dump())

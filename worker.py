@@ -11,10 +11,14 @@ import asyncio
 import sys
 
 from loguru import logger
-
+from app.logger import setup_logging
+from app.config import get_settings
 
 async def main():
     from app.worker import Worker
+    
+    settings = get_settings()
+    setup_logging(debug=settings.DEBUG)
 
     platforms = sys.argv[1:] if len(sys.argv) > 1 else None
     worker = Worker(queues=platforms)

@@ -10,8 +10,12 @@ from app.config import get_settings
 from app.publisher import close_publisher
 from app.router import router
 from app.worker import Worker
+from app.logger import setup_logging, trace_context
 
 settings = get_settings()
+
+# Initialize logging as early as possible
+setup_logging(debug=settings.DEBUG)
 
 _worker: Worker | None = None
 
@@ -48,13 +52,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+@app.middleware("http")
+async def add_tracing(request, call_next):
+    trace_id = request.headers.get("X-Trace-Id")
+    with trace_context(trace_id=trace_id):
+        response = await call_next(request)
+        if trace_id:
+            response.headers["X-Trace-Id"] = trace_id
+        return response
+
 
 app.include_router(router, prefix="/api/v1")
 

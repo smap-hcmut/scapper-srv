@@ -2,18 +2,16 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install SDK first (copied from build context)
-COPY sdk/ /tmp/sdk/
-RUN pip install --no-cache-dir /tmp/sdk && rm -rf /tmp/sdk
+# Install SDK wheel directly from build context
+COPY tinlikesub-*.whl /tmp/
+RUN pip install --no-cache-dir /tmp/tinlikesub-*.whl && rm -f /tmp/tinlikesub-*.whl
 
 # Install dependencies
-COPY scapper-srv/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY scapper-srv/ .
-
-RUN mkdir -p output
+COPY . .
 
 EXPOSE 8105
 
