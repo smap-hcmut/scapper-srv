@@ -28,7 +28,7 @@ spec:
         - name: harbor-registry
       containers:
         - name: scapper-api
-          image: registry.tantai.dev/smap/scapper:260313-005547
+          image: registry.tantai.dev/smap/scapper:260315-010854
           imagePullPolicy: IfNotPresent
           command: ["python", "run_api.py"]
           ports:
