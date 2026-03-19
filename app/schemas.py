@@ -59,7 +59,7 @@ class TaskResult(BaseModel):
 
 
 class CompletionEnvelope(BaseModel):
-    """Message payload published to ingest_task_completions queue."""
+    """Message payload published to ingest completion queue (routed by runtime_kind)."""
 
     task_id: str
     queue: str

@@ -12,6 +12,10 @@ from app.logger import get_trace_id
 _connection: aio_pika.abc.AbstractRobustConnection | None = None
 _channel: aio_pika.abc.AbstractChannel | None = None
 
+INGEST_EXECUTION_COMPLETION_QUEUE = "ingest_task_completions"
+INGEST_DRYRUN_COMPLETION_QUEUE = "ingest_dryrun_completions"
+RUNTIME_KIND_DRYRUN = "dryrun"
+
 
 async def get_channel() -> aio_pika.abc.AbstractChannel:
     """Get or create a persistent RabbitMQ channel."""
@@ -49,8 +53,8 @@ async def publish_task(queue_name: str, payload: dict) -> None:
 
 
 async def publish_completion(payload: dict) -> None:
-    """Publish a completion message to ingest_task_completions queue."""
-    queue_name = "ingest_task_completions"
+    """Publish a completion message to the routed ingest completion queue."""
+    queue_name = _resolve_completion_queue(payload)
     channel = await get_channel()
     await channel.declare_queue(queue_name, durable=True)
     message = Message(
@@ -63,6 +67,18 @@ async def publish_completion(payload: dict) -> None:
         f"Published completion to {queue_name}: task_id={payload.get('task_id', '')[:8]} "
         f"status={payload.get('status')}"
     )
+
+
+def _resolve_completion_queue(payload: dict) -> str:
+    metadata = payload.get("metadata") if isinstance(payload, dict) else None
+    if not isinstance(metadata, dict):
+        return INGEST_EXECUTION_COMPLETION_QUEUE
+
+    runtime_kind = str(metadata.get("runtime_kind", "")).strip().lower()
+    if runtime_kind == RUNTIME_KIND_DRYRUN:
+        return INGEST_DRYRUN_COMPLETION_QUEUE
+
+    return INGEST_EXECUTION_COMPLETION_QUEUE
 
 
 async def close_publisher() -> None:

@@ -194,6 +194,8 @@ class Worker:
             metadata={
                 "crawler_version": self.settings.APP_VERSION,
                 "mode": self.settings.MODE,
+                "runtime_kind": result.params.get("runtime_kind"),
+                "requested_limit": result.params.get("limit"),
             },
         )
 
