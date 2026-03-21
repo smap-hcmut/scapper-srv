@@ -3,6 +3,7 @@ import sys
 import os
 import json
 import email.utils
+import uuid
 from datetime import timezone, timedelta
 from contextvars import ContextVar
 from typing import Optional
@@ -31,12 +32,23 @@ class InterceptHandler(logging.Handler):
 def get_trace_id() -> Optional[str]:
     return _trace_id_var.get()
 
+def generate_trace_id() -> str:
+    return str(uuid.uuid4())
+
+def ensure_trace_id() -> str:
+    trace_id = _trace_id_var.get()
+    if trace_id:
+        return trace_id
+    trace_id = generate_trace_id()
+    _trace_id_var.set(trace_id)
+    return trace_id
+
 def set_trace_id(trace_id: str) -> None:
     _trace_id_var.set(trace_id)
 
 @contextmanager
 def trace_context(trace_id: Optional[str] = None):
-    token = _trace_id_var.set(trace_id)
+    token = _trace_id_var.set(trace_id or generate_trace_id())
     try:
         yield
     finally:
@@ -59,12 +71,19 @@ def setup_logging(debug: bool = False):
 
     ict_tz = timezone(timedelta(hours=7))
 
+    def enrich_record(record):
+        record["extra"]["trace_id"] = ensure_trace_id()
+        return record
+
+    logger.configure(patcher=enrich_record)
+
     def custom_json_sink(message):
         record = message.record
         dt = record["time"].astimezone(ict_tz)
+        trace_id = record["extra"].get("trace_id") or ensure_trace_id()
         log_dict = {
             "timestamp": email.utils.format_datetime(dt),
-            "trace_id": record["extra"].get("trace_id", ""),
+            "trace_id": trace_id,
             "level": record["level"].name.lower(),
             "caller": f"{record['file'].name}:{record['line']}",
             "message": record["message"],
@@ -81,21 +100,20 @@ def setup_logging(debug: bool = False):
         # Production: Use custom JSON sink for standardized flattened output
         logger.add(
             custom_json_sink,
-            level=level,
             filter=should_filter,
+            level=level,
         )
     else:
         # Development: Use human-readable format
         def formatter(record):
-            trace_id = _trace_id_var.get()
-            record["extra"]["trace_id"] = trace_id if trace_id else "-"
+            record["extra"]["trace_id"] = ensure_trace_id()
             fmt = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{extra[trace_id]: <36}</cyan> | <level>{message}</level>\n"
             return fmt
 
         logger.add(
             sys.stdout,
-            format=formatter,
             level=level,
+            format=formatter,
             colorize=True,
             backtrace=True,
             diagnose=True,

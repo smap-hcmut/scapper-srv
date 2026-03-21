@@ -7,7 +7,7 @@ from aio_pika import Message, DeliveryMode
 from loguru import logger
 
 from app.config import get_settings
-from app.logger import get_trace_id
+from app.logger import ensure_trace_id, get_trace_id
 
 _connection: aio_pika.abc.AbstractRobustConnection | None = None
 _channel: aio_pika.abc.AbstractChannel | None = None
@@ -35,7 +35,7 @@ async def publish_task(queue_name: str, payload: dict) -> None:
     await channel.declare_queue(queue_name, durable=True)
 
     headers = {}
-    trace_id = get_trace_id()
+    trace_id = get_trace_id() or ensure_trace_id()
     if trace_id:
         headers["X-Trace-Id"] = trace_id
 
@@ -57,10 +57,15 @@ async def publish_completion(payload: dict) -> None:
     queue_name = _resolve_completion_queue(payload)
     channel = await get_channel()
     await channel.declare_queue(queue_name, durable=True)
+    headers = {}
+    trace_id = get_trace_id() or ensure_trace_id()
+    if trace_id:
+        headers["X-Trace-Id"] = trace_id
     message = Message(
         body=json.dumps(payload, ensure_ascii=False).encode(),
         delivery_mode=DeliveryMode.PERSISTENT,
         content_type="application/json",
+        headers=headers,
     )
     await channel.default_exchange.publish(message, routing_key=queue_name)
     logger.info(

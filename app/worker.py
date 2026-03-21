@@ -14,7 +14,7 @@ from tinlikesub import TinLikeSubClient
 
 from app.config import get_settings
 from app.handlers import QUEUE_HANDLERS, QUEUE_PLATFORMS
-from app.logger import trace_context
+from app.logger import ensure_trace_id, trace_context
 from app.publisher import publish_completion
 from app.schemas import CompletionEnvelope, TaskResult
 from app.storage import save_result_data
@@ -45,6 +45,7 @@ class Worker:
 
     async def start(self) -> None:
         """Connect to RabbitMQ and start consuming."""
+        ensure_trace_id()
         os.makedirs(self.settings.OUTPUT_DIR, exist_ok=True)
 
         # SDK client with long timeout for crawl operations
@@ -70,6 +71,7 @@ class Worker:
 
     async def stop(self) -> None:
         """Gracefully shut down."""
+        ensure_trace_id()
         if self._client:
             await self._client.close()
             self._client = None
@@ -90,6 +92,8 @@ class Worker:
         trace_id = headers.get("X-Trace-Id")
         if isinstance(trace_id, bytes):
             trace_id = trace_id.decode(errors="ignore")
+        elif trace_id is not None:
+            trace_id = str(trace_id).strip()
 
         async with message.process():
             with trace_context(trace_id=trace_id):

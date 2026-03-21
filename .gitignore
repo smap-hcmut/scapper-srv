@@ -212,3 +212,4 @@ __marimo__/
 # Kubernetes manifests with real credentials (never commit)
 manifests/secret.yaml
 manifests/configmap.yaml
+scapper-config.yaml
