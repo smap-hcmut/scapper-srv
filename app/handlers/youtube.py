@@ -51,7 +51,7 @@ async def handle_comments(client: TinLikeSubClient, params: dict) -> Any:
 
 
 async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
-    """Composite: search → video_detail + comments for each result."""
+    """Composite: search → video_detail + comments + transcript for each result."""
     keyword = params.get("keyword", "")
     limit = params.get("limit", 5)
     comment_count = params.get("comment_count", 100)
@@ -78,7 +78,12 @@ async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
     results = []
     for video in videos:
         vid = video.get("video_id", "")
-        entry: dict[str, Any] = {"video": video, "detail": None, "comments": None}
+        entry: dict[str, Any] = {
+            "video": video,
+            "detail": None,
+            "comments": None,
+            "transcript": None,
+        }
 
         if vid:
             try:
@@ -92,6 +97,11 @@ async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
                 )
             except Exception as e:
                 entry["comments"] = {"error": str(e)}
+
+            try:
+                entry["transcript"] = await client.youtube.get_transcript(video_id=vid)
+            except Exception as e:
+                entry["transcript"] = {"error": str(e)}
 
         results.append(entry)
 
