@@ -10,7 +10,7 @@ Durable: Yes | Delivery: Persistent (`delivery_mode = 2`)
 |-------|----------|---------|
 | `tiktok_tasks` | TikTok | `search`, `post_detail`, `comments`, `summary`, `comment_replies`, `cookie_check`, `full_flow` |
 | `facebook_tasks` | Facebook | `search`, `posts`, `post_detail`, `comments`, `comments_graphql`, `comments_graphql_batch` |
-| `youtube_tasks` | YouTube | `search`, `videos`, `video_detail`, `transcript`, `comments` |
+| `youtube_tasks` | YouTube | `search`, `videos`, `video_detail`, `transcript`, `comments`, `full_flow` |
 
 ---
 
@@ -220,15 +220,21 @@ Lấy comments cho nhiều bài viết cùng lúc.
 
 ## youtube_tasks
 
-### `search (not yet)`
+### `search`
+
+Tìm kiếm video YouTube qua SSR scraping (batch, không cần API key).
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
-| `keyword` | Không | `string` | `""` | Từ khóa |
-| `limit` | Không | `int` | `20` | Số kết quả tối đa |
+| `keywords` | **Có** | `string[]` | — | Danh sách từ khóa (parallel) |
+| `limit` | Không | `int` | `20` | Số video tối đa mỗi keyword |
+| `sort_by` | Không | `string` | `null` | `"relevance"`, `"date"`, `"views"`, `"rating"` |
+| `upload_date` | Không | `string` | `null` | `"hour"`, `"today"`, `"week"`, `"month"`, `"year"` |
+| `video_type` | Không | `string` | `null` | `"video"`, `"channel"`, `"playlist"` |
+| `duration` | Không | `string` | `null` | `"short"` (<4p), `"medium"` (4-20p), `"long"` (>20p) |
 
 ```json
-{"task_id":"test-0008","action":"search","params":{"keyword":"review iphone","limit":10},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0008","action":"search","params":{"keywords":["review iphone","unbox samsung"],"limit":20,"sort_by":"views","upload_date":"month"},"created_at":"2026-03-04T00:00:00"}
 ```
 
 ### `videos (not yet)`
@@ -267,16 +273,35 @@ Lấy transcript/phụ đề video.
 {"task_id":"test-0017","action":"transcript","params":{"video_id":"dQw4w9WgXcQ"},"created_at":"2026-03-04T00:00:00"}
 ```
 
-### `comments (not yet)`
+### `comments`
 
 Lấy comments của video.
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
 | `video_id` | **Có** | `string` | — | YouTube video ID |
+| `limit` | Không | `int` | `100` | Số comment tối đa |
 
 ```json
-{"task_id":"test-0018","action":"comments","params":{"video_id":"dQw4w9WgXcQ"},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0018","action":"comments","params":{"video_id":"dQw4w9WgXcQ","limit":100},"created_at":"2026-03-04T00:00:00"}
+```
+
+### `full_flow`
+
+Tự động: tìm kiếm → lấy chi tiết + comments cho mỗi video.
+
+| Param | Bắt buộc | Type | Default | Mô tả |
+|-------|----------|------|---------|-------|
+| `keyword` | Không | `string` | `""` | Từ khóa |
+| `limit` | Không | `int` | `5` | Số video tối đa |
+| `comment_count` | Không | `int` | `100` | Số comment mỗi video |
+| `sort_by` | Không | `string` | `null` | `"relevance"`, `"date"`, `"views"`, `"rating"` |
+| `upload_date` | Không | `string` | `null` | `"hour"`, `"today"`, `"week"`, `"month"`, `"year"` |
+| `video_type` | Không | `string` | `null` | `"video"`, `"channel"`, `"playlist"` |
+| `duration` | Không | `string` | `null` | `"short"`, `"medium"`, `"long"` |
+
+```json
+{"task_id":"test-0019","action":"full_flow","params":{"keyword":"review iphone","limit":5,"comment_count":100,"sort_by":"views","upload_date":"month"},"created_at":"2026-03-04T00:00:00"}
 ```
 
 ---
