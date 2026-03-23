@@ -213,3 +213,4 @@ __marimo__/
 manifests/secret.yaml
 manifests/configmap.yaml
 scapper-config.yaml
+.DS_Store
