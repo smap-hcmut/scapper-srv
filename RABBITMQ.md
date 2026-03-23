@@ -9,7 +9,7 @@ Durable: Yes | Delivery: Persistent (`delivery_mode = 2`)
 | Queue | Platform | Actions |
 |-------|----------|---------|
 | `tiktok_tasks` | TikTok | `search`, `post_detail`, `comments`, `summary`, `comment_replies`, `cookie_check`, `full_flow` |
-| `facebook_tasks` | Facebook | `search`, `posts`, `post_detail`, `comments`, `comments_graphql`, `comments_graphql_batch` |
+| `facebook_tasks` | Facebook | `search`, `posts`, `post_detail`, `comments`, `comments_graphql`, `comments_graphql_batch`, `search_graphql`, `search_graphql_batch`, `full_flow` |
 | `youtube_tasks` | YouTube | `search`, `videos`, `video_detail`, `transcript`, `comments`, `full_flow` |
 
 ---
@@ -216,13 +216,55 @@ Lấy comments cho nhiều bài viết cùng lúc.
 {"task_id":"test-0015","action":"comments_graphql_batch","params":{"post_ids":["123456789012345","987654321098765"],"count":50,"sort":"hot"},"created_at":"2026-03-04T00:00:00"}
 ```
 
+### `search_graphql`
+
+Tìm kiếm bài viết Facebook.
+
+| Param | Bắt buộc | Type | Default | Mô tả |
+|-------|----------|------|---------|-------|
+| `keyword` | **Có** | `string` | — | Từ khóa tìm kiếm |
+| `cursor` | Không | `string` | `null` | Cursor phân trang (từ `end_cursor` response trước) |
+| `count` | Không | `int` | `5` | Số bài viết cần lấy |
+
+```json
+{"task_id":"test-0020","action":"search_graphql","params":{"keyword":"thỏ ơi","count":10},"created_at":"2026-03-04T00:00:00"}
+```
+
+### `search_graphql_batch`
+
+Tìm kiếm nhiều từ khóa song song.
+
+| Param | Bắt buộc | Type | Default | Mô tả |
+|-------|----------|------|---------|-------|
+| `keywords` | **Có** | `string[]` | — | Danh sách từ khóa |
+| `count` | Không | `int` | `5` | Số bài viết mỗi keyword |
+
+```json
+{"task_id":"test-0021","action":"search_graphql_batch","params":{"keywords":["thỏ ơi","trấn thành"],"count":5},"created_at":"2026-03-04T00:00:00"}
+```
+
+### `full_flow`
+
+Tự động: tìm kiếm → lấy comments cho mỗi bài viết.
+
+| Param | Bắt buộc | Type | Default | Mô tả |
+|-------|----------|------|---------|-------|
+| `keyword` | Không | `string` | `""` | Từ khóa |
+| `limit` | Không | `int` | `5` | Số bài viết tối đa |
+| `comment_count` | Không | `int` | `50` | Số comment mỗi bài |
+| `comment_sort` | Không | `string` | `"hot"` | `"hot"` hoặc `"newest"` |
+
+```json
+{"task_id":"test-0022","action":"full_flow","params":{"keyword":"thỏ ơi","limit":5,"comment_count":50,"comment_sort":"hot"},"created_at":"2026-03-04T00:00:00"}
+```
+
 ---
 
 ## youtube_tasks
 
 ### `search`
 
-Tìm kiếm video YouTube qua SSR scraping (batch, không cần API key).
+Tìm kiếm video YouTube.
 
 | Param | Bắt buộc | Type | Default | Mô tả |
 |-------|----------|------|---------|-------|
@@ -234,7 +276,7 @@ Tìm kiếm video YouTube qua SSR scraping (batch, không cần API key).
 | `duration` | Không | `string` | `null` | `"short"` (<4p), `"medium"` (4-20p), `"long"` (>20p) |
 
 ```json
-{"task_id":"test-0008","action":"search","params":{"keywords":["review iphone","unbox samsung"],"limit":20,"sort_by":"views","upload_date":"month"},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0008","action":"search","params":{"keywords":["review iphone","unbox samsung"],"limit":20,"sort_by":"views"},"created_at":"2026-03-04T00:00:00"}
 ```
 
 ### `videos (not yet)`
@@ -301,7 +343,7 @@ Tự động: tìm kiếm → lấy chi tiết + comments cho mỗi video.
 | `duration` | Không | `string` | `null` | `"short"`, `"medium"`, `"long"` |
 
 ```json
-{"task_id":"test-0019","action":"full_flow","params":{"keyword":"review iphone","limit":5,"comment_count":100,"sort_by":"views","upload_date":"month"},"created_at":"2026-03-04T00:00:00"}
+{"task_id":"test-0019","action":"full_flow","params":{"keyword":"review iphone","limit":5,"comment_count":100,"sort_by":"views"},"created_at":"2026-03-04T00:00:00"}
 ```
 
 ---

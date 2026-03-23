@@ -57,6 +57,59 @@ async def handle_comments_graphql_batch(client: TinLikeSubClient, params: dict) 
     )
 
 
+async def handle_search_graphql(client: TinLikeSubClient, params: dict) -> Any:
+    keyword = params.get("keyword", "")
+    cursor = params.get("cursor")
+    count = params.get("count", 5)
+    logger.info(f"[Facebook] search_graphql: keyword={keyword} count={count}")
+    return await client.facebook.search_graphql(
+        keyword=keyword, cursor=cursor, count=count,
+    )
+
+
+async def handle_search_graphql_batch(client: TinLikeSubClient, params: dict) -> Any:
+    keywords = params["keywords"]
+    count = params.get("count", 5)
+    logger.info(f"[Facebook] search_graphql_batch: {len(keywords)} keywords count={count}")
+    return await client.facebook.search_graphql_batch(
+        keywords=keywords, count=count,
+    )
+
+
+async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
+    """search keyword → get posts → get comments (graphql) for each post."""
+    keyword = params.get("keyword", "")
+    limit = params.get("limit", 5)
+    comment_count = params.get("comment_count", 50)
+    comment_sort = params.get("comment_sort", "hot")
+
+    logger.info(f"[Facebook] full_flow: keyword={keyword} limit={limit}")
+
+    # Step 1: Search via GraphQL
+    search_result = await client.facebook.search_graphql(
+        keyword=keyword, count=limit,
+    )
+    posts: list[dict] = search_result.get("posts", [])
+
+    # Step 2: For each post → comments (graphql)
+    results = []
+    for post in posts:
+        post_id = post.get("post_id")
+        entry: dict[str, Any] = {"post": post, "comments": None}
+
+        if post_id:
+            try:
+                entry["comments"] = await client.facebook.get_comments_graphql(
+                    post_id=post_id, count=comment_count, sort=comment_sort,
+                )
+            except Exception as e:
+                entry["comments"] = {"error": str(e)}
+
+        results.append(entry)
+
+    return {"keyword": keyword, "total_posts": len(results), "posts": results}
+
+
 HANDLERS = {
     "search": handle_search,
     "posts": handle_posts,
@@ -64,4 +117,7 @@ HANDLERS = {
     "comments": handle_comments,
     "comments_graphql": handle_comments_graphql,
     "comments_graphql_batch": handle_comments_graphql_batch,
+    "search_graphql": handle_search_graphql,
+    "search_graphql_batch": handle_search_graphql_batch,
+    "full_flow": handle_full_flow,
 }
