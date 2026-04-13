@@ -15,7 +15,7 @@ REGISTRY="${HARBOR_REGISTRY:-registry.tantai.dev}"
 HARBOR_USER="${HARBOR_USERNAME:?HARBOR_USERNAME is not set}"
 HARBOR_PASS="${HARBOR_PASSWORD:?HARBOR_PASSWORD is not set}"
 PROJECT="smap"
-SERVICE="scapper"
+SERVICE="scapper-srv"
 DOCKERFILE="Dockerfile"
 PLATFORM="${PLATFORM:-linux/amd64}"
 

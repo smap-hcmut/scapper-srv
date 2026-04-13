@@ -1,18 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: scapper-api
+  name: scapper-srv
   namespace: smap
   labels:
-    app: scapper-api
+    app: scapper-srv
     app.kubernetes.io/part-of: smap
-    app.kubernetes.io/component: api
 spec:
   replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: scapper-api
+      app: scapper-srv
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -21,16 +20,16 @@ spec:
   template:
     metadata:
       labels:
-        app: scapper-api
+        app: scapper-srv
         app.kubernetes.io/part-of: smap
     spec:
       imagePullSecrets:
         - name: harbor-registry
       containers:
-        - name: scapper-api
-          image: registry.tantai.dev/smap/scapper:260316-235109
+        - name: scapper-srv
+          image: registry.tantai.dev/smap/scapper-srv:latest
           imagePullPolicy: IfNotPresent
-          command: ["python", "run_api.py"]
+          # Dockerfile CMD runs uvicorn app.main:app which starts both API + RabbitMQ worker
           ports:
             - containerPort: 8105
               name: http
@@ -49,7 +48,7 @@ spec:
                 name: scapper-secrets
           env:
             - name: CONTAINER_NAME
-              value: "scapper-api"
+              value: "scapper-srv"
             - name: KUBERNETES_NAMESPACE
               valueFrom:
                 fieldRef:
@@ -98,14 +97,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: scapper-api
+  name: scapper-srv
   namespace: smap
   labels:
-    app: scapper-api
+    app: scapper-srv
     app.kubernetes.io/part-of: smap
 spec:
   selector:
-    app: scapper-api
+    app: scapper-srv
   ports:
     - port: 80
       targetPort: 8105
