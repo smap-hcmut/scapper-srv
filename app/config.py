@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     MODE: str = Field(default="dev")  # dev | production
 
     # RabbitMQ
-    RABBITMQ_URL: str = Field(default="amqp://admin:21042004@172.16.21.206:5672/")
+    RABBITMQ_URL: str = Field(default="amqp://admin:21042004@172.16.21.200:5672/")
 
     # MinIO (used in production mode)
     MINIO_ENDPOINT: str = Field(default="172.16.21.10:9000")
