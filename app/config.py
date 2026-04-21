@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     API_SECRET_KEY: str = Field(default="")
 
     # Worker
-    WORKER_PREFETCH_COUNT: int = Field(default=1)
+    WORKER_PREFETCH_COUNT: int = Field(default=4)
     OUTPUT_DIR: str = Field(default="output")
 
     model_config = {"env_file": ".env", "extra": "ignore", "env_file_encoding": "utf-8"}

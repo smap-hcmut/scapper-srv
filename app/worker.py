@@ -26,7 +26,9 @@ class Worker:
     def __init__(self, queues: list[str] | None = None):
         self.settings = get_settings()
         self._connection: aio_pika.abc.AbstractRobustConnection | None = None
-        self._channel: aio_pika.abc.AbstractChannel | None = None
+        # One channel per queue so each queue's prefetch_count is independent
+        # and queues from different platforms can run concurrently.
+        self._channels: list[aio_pika.abc.AbstractChannel] = []
         self._client: TinLikeSubClient | None = None
 
         # Resolve queue names from platform names or queue names
@@ -57,17 +59,25 @@ class Worker:
         )
 
         self._connection = await aio_pika.connect_robust(self.settings.RABBITMQ_URL)
-        self._channel = await self._connection.channel()
-        await self._channel.set_qos(prefetch_count=self.settings.WORKER_PREFETCH_COUNT)
 
+        # Create one channel per queue so that different queues (platforms)
+        # consume concurrently — prefetch_count applies per-channel in RabbitMQ.
         for queue_name in self._queue_names:
-            queue = await self._channel.declare_queue(queue_name, durable=True)
+            channel = await self._connection.channel()
+            await channel.set_qos(prefetch_count=self.settings.WORKER_PREFETCH_COUNT)
+            self._channels.append(channel)
+
+            queue = await channel.declare_queue(queue_name, durable=True)
             await queue.consume(
                 lambda msg, qn=queue_name: self._on_message(msg, qn),
             )
-            logger.info(f"Consuming from queue: {queue_name}")
+            logger.info(
+                f"Consuming from queue: {queue_name} (dedicated channel, prefetch={self.settings.WORKER_PREFETCH_COUNT})"
+            )
 
-        logger.info(f"Worker started. Mode: {self.settings.MODE}. Queues: {self._queue_names}")
+        logger.info(
+            f"Worker started. Mode: {self.settings.MODE}. Queues: {self._queue_names}"
+        )
 
     async def stop(self) -> None:
         """Gracefully shut down."""
@@ -75,8 +85,10 @@ class Worker:
         if self._client:
             await self._client.close()
             self._client = None
-        if self._channel and not self._channel.is_closed:
-            await self._channel.close()
+        for channel in self._channels:
+            if not channel.is_closed:
+                await channel.close()
+        self._channels.clear()
         if self._connection and not self._connection.is_closed:
             await self._connection.close()
         logger.info("Worker stopped.")
@@ -104,25 +116,31 @@ class Worker:
                     params = body.get("params", {})
                     created_at = body.get("created_at", "")
 
-                    logger.info(f"[{queue_name}] Received: action={action} task_id={task_id[:8]}")
+                    logger.info(
+                        f"[{queue_name}] Received: action={action} task_id={task_id[:8]}"
+                    )
 
                     # Find handler
                     handlers = QUEUE_HANDLERS.get(queue_name, {})
                     handler = handlers.get(action)
 
                     if handler is None:
-                        error_msg = f"Unknown action '{action}' for queue '{queue_name}'"
+                        error_msg = (
+                            f"Unknown action '{action}' for queue '{queue_name}'"
+                        )
                         logger.error(error_msg)
-                        await self._handle_result(TaskResult(
-                            task_id=task_id,
-                            queue=queue_name,
-                            action=action,
-                            params=params,
-                            created_at=created_at,
-                            completed_at=datetime.now(timezone.utc).isoformat(),
-                            status="error",
-                            error=error_msg,
-                        ))
+                        await self._handle_result(
+                            TaskResult(
+                                task_id=task_id,
+                                queue=queue_name,
+                                action=action,
+                                params=params,
+                                created_at=created_at,
+                                completed_at=datetime.now(timezone.utc).isoformat(),
+                                status="error",
+                                error=error_msg,
+                            )
+                        )
                         return
 
                     # Execute
@@ -134,33 +152,41 @@ class Worker:
                         item_count = len(result)
                     elif isinstance(result, dict):
                         # For tiktok full_flow or similar
-                        item_count = result.get("total_posts") or result.get("item_count") or 1
+                        item_count = (
+                            result.get("total_posts") or result.get("item_count") or 1
+                        )
 
-                    await self._handle_result(TaskResult(
-                        task_id=task_id,
-                        queue=queue_name,
-                        action=action,
-                        params=params,
-                        created_at=created_at,
-                        completed_at=datetime.now(timezone.utc).isoformat(),
-                        status="success",
-                        result=result,
-                        item_count=item_count,
-                    ))
-                    logger.info(f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}")
+                    await self._handle_result(
+                        TaskResult(
+                            task_id=task_id,
+                            queue=queue_name,
+                            action=action,
+                            params=params,
+                            created_at=created_at,
+                            completed_at=datetime.now(timezone.utc).isoformat(),
+                            status="success",
+                            result=result,
+                            item_count=item_count,
+                        )
+                    )
+                    logger.info(
+                        f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}"
+                    )
 
                 except Exception as e:
                     logger.exception(f"[{queue_name}] Error processing message: {e}")
-                    await self._handle_result(TaskResult(
-                        task_id=body.get("task_id", "unknown"),
-                        queue=queue_name,
-                        action=body.get("action", "unknown"),
-                        params=body.get("params", {}),
-                        created_at=body.get("created_at", ""),
-                        completed_at=datetime.now(timezone.utc).isoformat(),
-                        status="error",
-                        error=str(e),
-                    ))
+                    await self._handle_result(
+                        TaskResult(
+                            task_id=body.get("task_id", "unknown"),
+                            queue=queue_name,
+                            action=body.get("action", "unknown"),
+                            params=body.get("params", {}),
+                            created_at=body.get("created_at", ""),
+                            completed_at=datetime.now(timezone.utc).isoformat(),
+                            status="error",
+                            error=str(e),
+                        )
+                    )
 
     async def _handle_result(self, result: TaskResult) -> None:
         """Save result to storage and publish completion to ingest-srv."""

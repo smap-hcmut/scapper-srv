@@ -41,9 +41,14 @@ async def handle_comments_graphql(client: TinLikeSubClient, params: dict) -> Any
     cursor = params.get("cursor")
     count = params.get("count", 50)
     sort = params.get("sort", "hot")
-    logger.info(f"[Facebook] comments_graphql: post_id={post_id} sort={sort} count={count}")
+    logger.info(
+        f"[Facebook] comments_graphql: post_id={post_id} sort={sort} count={count}"
+    )
     return await client.facebook.get_comments_graphql(
-        post_id=post_id, cursor=cursor, count=count, sort=sort,
+        post_id=post_id,
+        cursor=cursor,
+        count=count,
+        sort=sort,
     )
 
 
@@ -53,7 +58,9 @@ async def handle_comments_graphql_batch(client: TinLikeSubClient, params: dict) 
     sort = params.get("sort", "hot")
     logger.info(f"[Facebook] comments_graphql_batch: {len(post_ids)} posts sort={sort}")
     return await client.facebook.get_comments_graphql_batch(
-        post_ids=post_ids, count=count, sort=sort,
+        post_ids=post_ids,
+        count=count,
+        sort=sort,
     )
 
 
@@ -63,16 +70,21 @@ async def handle_search_graphql(client: TinLikeSubClient, params: dict) -> Any:
     count = params.get("count", 5)
     logger.info(f"[Facebook] search_graphql: keyword={keyword} count={count}")
     return await client.facebook.search_graphql(
-        keyword=keyword, cursor=cursor, count=count,
+        keyword=keyword,
+        cursor=cursor,
+        count=count,
     )
 
 
 async def handle_search_graphql_batch(client: TinLikeSubClient, params: dict) -> Any:
     keywords = params["keywords"]
     count = params.get("count", 5)
-    logger.info(f"[Facebook] search_graphql_batch: {len(keywords)} keywords count={count}")
+    logger.info(
+        f"[Facebook] search_graphql_batch: {len(keywords)} keywords count={count}"
+    )
     return await client.facebook.search_graphql_batch(
-        keywords=keywords, count=count,
+        keywords=keywords,
+        count=count,
     )
 
 
@@ -87,7 +99,8 @@ async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
 
     # Step 1: Search via GraphQL
     search_result = await client.facebook.search_graphql(
-        keyword=keyword, count=limit,
+        keyword=keyword,
+        count=limit,
     )
     posts: list[dict] = search_result.get("posts", [])
 
@@ -100,9 +113,14 @@ async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
         if post_id:
             try:
                 entry["comments"] = await client.facebook.get_comments_graphql(
-                    post_id=post_id, count=comment_count, sort=comment_sort,
+                    post_id=post_id,
+                    count=comment_count,
+                    sort=comment_sort,
                 )
             except Exception as e:
+                logger.warning(
+                    f"[Facebook] full_flow: failed to fetch comments for post_id={post_id}: {e}"
+                )
                 entry["comments"] = {"error": str(e)}
 
         results.append(entry)
