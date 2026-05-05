@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     WORKER_PREFETCH_COUNT: int = 1
     OUTPUT_DIR: str = "output"
 
+    # MinIO
+    MINIO_ENDPOINT: str = "localhost:9000"
+    MINIO_ACCESS_KEY: str = ""
+    MINIO_SECRET_KEY: str = ""
+    MINIO_USE_SSL: bool = False
+    MINIO_BUCKET: str = "ingest-data"
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 
