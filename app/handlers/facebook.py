@@ -9,17 +9,26 @@ from tinlikesub import TinLikeSubClient
 
 
 async def handle_search(client: TinLikeSubClient, params: dict) -> Any:
+    """Alias for search_graphql — the legacy v1 Graph-search SDK method was
+    removed in tinlikesub 0.3.0 (no v2 JobKind backed it)."""
     keyword = params.get("keyword", "")
-    limit = params.get("limit", 20)
-    logger.info(f"[Facebook] search: keyword={keyword} limit={limit}")
-    return await client.facebook.search(keyword=keyword, limit=limit)
+    count = params.get("limit", params.get("count", 20))
+    cursor = params.get("cursor")
+    logger.info(f"[Facebook] search: keyword={keyword} count={count}")
+    return await client.facebook.search_graphql(
+        keyword=keyword, count=count, cursor=cursor,
+    )
 
 
 async def handle_posts(client: TinLikeSubClient, params: dict) -> Any:
+    """Same migration story as handle_search — routes through GraphQL/v2."""
     keyword = params.get("keyword", "")
-    page_size = params.get("page_size", 20)
-    logger.info(f"[Facebook] posts: keyword={keyword}")
-    return await client.facebook.search(keyword=keyword, limit=page_size)
+    count = params.get("page_size", params.get("count", 20))
+    cursor = params.get("cursor")
+    logger.info(f"[Facebook] posts: keyword={keyword} count={count}")
+    return await client.facebook.search_graphql(
+        keyword=keyword, count=count, cursor=cursor,
+    )
 
 
 async def handle_post_detail(client: TinLikeSubClient, params: dict) -> Any:
@@ -30,10 +39,16 @@ async def handle_post_detail(client: TinLikeSubClient, params: dict) -> Any:
 
 
 async def handle_comments(client: TinLikeSubClient, params: dict) -> Any:
+    """Alias for comments_graphql — the legacy Graph-API SDK method was
+    removed in tinlikesub 0.3.0 (no v2 JobKind backed it)."""
     post_id = params["post_id"]
-    limit = params.get("limit", 100)
-    logger.info(f"[Facebook] comments: post_id={post_id} limit={limit}")
-    return await client.facebook.get_comments(post_id=post_id, limit=limit)
+    count = params.get("limit", params.get("count", 100))
+    cursor = params.get("cursor")
+    sort = params.get("sort", "hot")
+    logger.info(f"[Facebook] comments: post_id={post_id} count={count}")
+    return await client.facebook.get_comments_graphql(
+        post_id=post_id, count=count, cursor=cursor, sort=sort,
+    )
 
 
 async def handle_comments_graphql(client: TinLikeSubClient, params: dict) -> Any:
