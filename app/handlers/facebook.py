@@ -112,6 +112,21 @@ async def handle_search_graphql_batch(client: TinLikeSubClient, params: dict) ->
     )
 
 
+async def handle_page_posts(client: TinLikeSubClient, params: dict) -> Any:
+    page_id = params["page_id"]
+    count = params.get("count", params.get("limit", 10))
+    cursor = params.get("cursor")
+    logger.info(f"[Facebook] page_posts: page_id={page_id} count={count}")
+    envelope = await client.facebook.get_page_posts(
+        page_id=page_id, count=count, cursor=cursor,
+    )
+    logger.debug(
+        f"[Facebook] page_posts: post_count={envelope.get('post_count')} "
+        f"end_cursor={envelope.get('end_cursor')} has_next={envelope.get('has_next')}"
+    )
+    return envelope
+
+
 async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
     """search keyword → get posts → get comments (graphql) for each post."""
     keyword = params.get("keyword", "")
@@ -155,5 +170,6 @@ HANDLERS = {
     "comments_graphql_batch": handle_comments_graphql_batch,
     "search_graphql": handle_search_graphql,
     "search_graphql_batch": handle_search_graphql_batch,
+    "page_posts": handle_page_posts,
     "full_flow": handle_full_flow,
 }
