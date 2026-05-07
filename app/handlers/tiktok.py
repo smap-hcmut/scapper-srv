@@ -23,8 +23,36 @@ def _extract_aweme_id(video_url: str) -> str:
 
 async def handle_search(client: TinLikeSubClient, params: dict) -> Any:
     keywords = params.get("keywords", [])
-    logger.info(f"[TikTok] search: keywords={keywords}")
-    return await client.tiktok.search(keywords=keywords)
+    region = params.get("region")
+    target = params.get("target")
+
+    if target:
+        page_size = params.get("page_size", 16)
+        logger.info(
+            f"[TikTok] search (auto-paginate): keywords={keywords} "
+            f"target={target} page_size={page_size} region={region}"
+        )
+        return await client.tiktok.search_until(
+            keywords=keywords,
+            target=int(target),
+            page_size=int(page_size),
+            region=region,
+        )
+
+    cursor = params.get("cursor", 0)
+    count = params.get("count", 20)
+    search_id = params.get("search_id")
+    logger.info(
+        f"[TikTok] search: keywords={keywords} cursor={cursor} "
+        f"count={count} search_id={search_id} region={region}"
+    )
+    return await client.tiktok.search(
+        keywords=keywords,
+        cursor=cursor,
+        count=count,
+        search_id=search_id,
+        region=region,
+    )
 
 
 async def handle_post_detail(client: TinLikeSubClient, params: dict) -> Any:

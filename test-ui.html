@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scapper Test UI</title>
+<style>
+  :root { --bg: #0f172a; --surface: #1e293b; --border: #334155; --text: #e2e8f0; --muted: #94a3b8; --accent: #3b82f6; --green: #22c55e; --red: #ef4444; --yellow: #eab308; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+  header { display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+  header h1 { font-size: 20px; font-weight: 600; }
+  #health-badge { font-size: 12px; padding: 4px 10px; border-radius: 12px; background: var(--surface); }
+  .healthy { color: var(--green); border: 1px solid var(--green); }
+  .unhealthy { color: var(--red); border: 1px solid var(--red); }
+
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
+  @media (max-width: 800px) { .layout { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .panel h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 12px; }
+
+  label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+  select, input, textarea { width: 100%; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+  select:focus, input:focus, textarea:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 120px; font-family: 'Consolas', 'Fira Code', monospace; font-size: 13px; }
+
+  .form-group { margin-bottom: 12px; }
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+
+  button { padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity .15s; }
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: #fff; width: 100%; padding: 10px; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; background: var(--border); color: var(--text); }
+  .btn-green { background: var(--green); color: #000; }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .presets button { font-size: 11px; padding: 4px 8px; border-radius: 4px; background: var(--border); color: var(--text); }
+  .presets button:hover { background: var(--accent); }
+
+  .tasks-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .tasks-header h2 { margin-bottom: 0; }
+
+  .task-list { display: flex; flex-direction: column; gap: 8px; max-height: calc(100vh - 180px); overflow-y: auto; }
+  .task-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; cursor: pointer; transition: border-color .15s; }
+  .task-card:hover { border-color: var(--accent); }
+  .task-card.active { border-color: var(--accent); background: #1a2744; }
+  .task-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .task-id { font-family: monospace; font-size: 12px; color: var(--muted); }
+  .badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+  .badge-success { background: #16532d; color: var(--green); }
+  .badge-error { background: #5c1d1d; color: var(--red); }
+  .badge-pending { background: #4a3a0a; color: var(--yellow); }
+  .task-action { font-size: 14px; font-weight: 500; }
+  .task-queue { font-size: 12px; color: var(--muted); }
+  .task-time { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .result-panel { display: flex; flex-direction: column; }
+  .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .result-json { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: 'Consolas', 'Fira Code', monospace; font-size: 12px; line-height: 1.5; overflow: auto; max-height: calc(100vh - 300px); white-space: pre-wrap; word-break: break-all; flex: 1; }
+
+  .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+
+  .poll-indicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--yellow); }
+  .poll-indicator .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .toast { position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; border-radius: 8px; font-size: 13px; z-index: 100; animation: slideIn .3s; }
+  .toast-success { background: #16532d; color: var(--green); border: 1px solid var(--green); }
+  .toast-error { background: #5c1d1d; color: var(--red); border: 1px solid var(--red); }
+  @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Scapper Test UI</h1>
+    <span id="health-badge" class="unhealthy">checking...</span>
+  </header>
+
+  <div class="layout">
+    <!-- Left: Submit form -->
+    <div>
+      <div class="panel" style="margin-bottom: 16px;">
+        <h2>Submit Task</h2>
+        <div class="form-group row">
+          <div>
+            <label>Platform</label>
+            <select id="platform">
+              <option value="tiktok">TikTok</option>
+              <option value="facebook">Facebook</option>
+              <option value="youtube">YouTube</option>
+            </select>
+          </div>
+          <div>
+            <label>Action</label>
+            <select id="action"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Presets</label>
+          <div id="presets" class="presets"></div>
+        </div>
+        <div class="form-group">
+          <label>Params (JSON)</label>
+          <textarea id="params">{}</textarea>
+        </div>
+        <button class="btn-primary" id="submit-btn" onclick="submitTask()">Submit Task</button>
+      </div>
+
+      <div class="panel">
+        <div class="tasks-header">
+          <h2>Recent Tasks</h2>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span id="poll-status"></span>
+            <button class="btn-sm" onclick="loadTasks()">Refresh</button>
+          </div>
+        </div>
+        <div id="task-list" class="task-list">
+          <div class="empty-state">No tasks yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Result viewer -->
+    <div class="panel result-panel">
+      <div class="result-header">
+        <h2>Result</h2>
+        <button class="btn-sm" id="copy-btn" onclick="copyResult()" style="display:none">Copy JSON</button>
+      </div>
+      <div id="result-view" class="result-json">
+        <div class="empty-state">Select a task or submit a new one</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8105/api/v1';
+
+const ACTIONS = {
+  tiktok: ['search','post_detail','comments','summary','comment_replies','cookie_check','full_flow'],
+  facebook: ['search','posts','post_detail','comments','comments_graphql','comments_graphql_batch','search_graphql','search_graphql_batch','full_flow'],
+  youtube: ['search','videos','video_detail','transcript','comments','full_flow'],
+};
+
+const PRESETS = {
+  tiktok: {
+    search: { keywords: ["review iphone"], target: 48, page_size: 16, region: null },
+    post_detail: { urls: ["https://www.tiktok.com/@user/video/1234567890"] },
+    comments: { video_urls: ["https://www.tiktok.com/@user/video/7612600015135034644"], count: 50, threshold: 0.5 },
+    summary: { video_urls: ["https://www.tiktok.com/@user/video/7612600015135034644"] },
+    comment_replies: { video_url: "https://www.tiktok.com/@user/video/7612600015135034644", comment_id: "7612345678901234567" },
+    cookie_check: {},
+    full_flow: { keyword: "review iphone", limit: 3, threshold: 0.5, comment_count: 200 },
+  },
+  facebook: {
+    search: { keyword: "iphone 16", limit: 10 },
+    posts: { keyword: "samsung galaxy", page_size: 20 },
+    post_detail: { parse_ids: ["pfbid02ABC123"] },
+    comments: { post_id: "123456789012345", limit: 100 },
+    comments_graphql: { post_id: "123456789012345", count: 50, sort: "newest" },
+    comments_graphql_batch: { post_ids: ["123456789012345","987654321098765"], count: 50, sort: "hot" },
+    search_graphql: { keyword: "thỏ ơi", count: 10 },
+    search_graphql_batch: { keywords: ["thỏ ơi","trấn thành"], count: 5 },
+    full_flow: { keyword: "thỏ ơi", limit: 5, comment_count: 50, comment_sort: "hot" },
+  },
+  youtube: {
+    search: { keywords: ["review iphone"], limit: 20, sort_by: "views" },
+    videos: { keyword: "samsung", page: 1, page_size: 20 },
+    video_detail: { video_id: "dQw4w9WgXcQ" },
+    transcript: { video_id: "dQw4w9WgXcQ" },
+    comments: { video_id: "dQw4w9WgXcQ", limit: 100 },
+    full_flow: { keyword: "review iphone", limit: 5, comment_count: 100, sort_by: "views" },
+  },
+};
+
+let pendingTaskIds = [];
+let pollTimer = null;
+let activeTaskId = null;
+
+// --- Platform / Action selectors ---
+const platformEl = document.getElementById('platform');
+const actionEl = document.getElementById('action');
+const paramsEl = document.getElementById('params');
+const presetsEl = document.getElementById('presets');
+
+function updateActions() {
+  const p = platformEl.value;
+  actionEl.innerHTML = ACTIONS[p].map(a => `<option value="${a}">${a}</option>`).join('');
+  updatePresets();
+}
+
+function updatePresets() {
+  const p = platformEl.value;
+  const a = actionEl.value;
+  const preset = PRESETS[p]?.[a];
+  presetsEl.innerHTML = '';
+  if (preset) {
+    const btn = document.createElement('button');
+    btn.textContent = 'Load preset';
+    btn.onclick = () => { paramsEl.value = JSON.stringify(preset, null, 2); };
+    presetsEl.appendChild(btn);
+  }
+  // auto-load preset on action change
+  if (preset) paramsEl.value = JSON.stringify(preset, null, 2);
+}
+
+platformEl.addEventListener('change', updateActions);
+actionEl.addEventListener('change', updatePresets);
+updateActions();
+
+// --- Submit ---
+async function submitTask() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  try {
+    let params;
+    try { params = JSON.parse(paramsEl.value); }
+    catch { throw new Error('Invalid JSON in params'); }
+
+    const res = await fetch(`${API}/tasks/${platformEl.value}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: actionEl.value, params }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    toast(`Task submitted: ${data.task_id.slice(0, 8)}`, 'success');
+    pendingTaskIds.push(data.task_id);
+    startPolling();
+    loadTasks();
+    showResult(data);
+  } catch (e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit Task';
+  }
+}
+
+// --- Task list ---
+async function loadTasks() {
+  try {
+    const res = await fetch(`${API}/tasks?limit=30`);
+    if (!res.ok) return;
+    const tasks = await res.json();
+    renderTaskList(tasks);
+
+    // check if pending tasks completed
+    const completedIds = tasks.filter(t => pendingTaskIds.includes(t.task_id)).map(t => t.task_id);
+    pendingTaskIds = pendingTaskIds.filter(id => !completedIds.includes(id));
+    if (pendingTaskIds.length === 0) stopPolling();
+  } catch { /* server down */ }
+}
+
+function renderTaskList(tasks) {
+  const el = document.getElementById('task-list');
+  if (!tasks.length) { el.innerHTML = '<div class="empty-state">No tasks yet</div>'; return; }
+  el.innerHTML = tasks.map(t => `
+    <div class="task-card ${t.task_id === activeTaskId ? 'active' : ''}" onclick="viewTask('${t.task_id}')">
+      <div class="task-meta">
+        <span class="task-action">${t.action || '?'}</span>
+        <span class="badge badge-${t.status === 'success' ? 'success' : t.status === 'error' ? 'error' : 'pending'}">${t.status || 'pending'}</span>
+      </div>
+      <div class="task-queue">${(t.queue || '').replace('_tasks', '')}</div>
+      <div class="task-meta">
+        <span class="task-id">${(t.task_id || '').slice(0, 8)}</span>
+        <span class="task-time">${t.completed_at ? new Date(t.completed_at).toLocaleTimeString() : ''}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function viewTask(taskId) {
+  activeTaskId = taskId;
+  try {
+    const res = await fetch(`${API}/tasks/${taskId}/result`);
+    if (!res.ok) { showResult({ error: `HTTP ${res.status}` }); return; }
+    const data = await res.json();
+    showResult(data);
+  } catch (e) { showResult({ error: e.message }); }
+  // re-render list to highlight active
+  loadTasks();
+}
+
+function showResult(data) {
+  const el = document.getElementById('result-view');
+  const copyBtn = document.getElementById('copy-btn');
+  el.textContent = JSON.stringify(data, null, 2);
+  copyBtn.style.display = 'inline-block';
+}
+
+function copyResult() {
+  const text = document.getElementById('result-view').textContent;
+  navigator.clipboard.writeText(text).then(() => toast('Copied!', 'success'));
+}
+
+// --- Polling ---
+function startPolling() {
+  if (pollTimer) return;
+  document.getElementById('poll-status').innerHTML = '<span class="poll-indicator"><span class="dot"></span>polling</span>';
+  pollTimer = setInterval(loadTasks, 3000);
+}
+
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  document.getElementById('poll-status').innerHTML = '';
+}
+
+// --- Health check ---
+async function checkHealth() {
+  const badge = document.getElementById('health-badge');
+  try {
+    const res = await fetch('http://localhost:8105/health');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    badge.textContent = `${data.status} | worker: ${data.worker_active ? 'on' : 'off'}`;
+    badge.className = data.status === 'healthy' ? 'healthy' : 'unhealthy';
+  } catch {
+    badge.textContent = 'offline';
+    badge.className = 'unhealthy';
+  }
+}
+
+// --- Toast ---
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// --- Init ---
+checkHealth();
+setInterval(checkHealth, 15000);
+loadTasks();
+</script>
+</body>
+</html>
