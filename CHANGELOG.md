@@ -1,8 +1,8 @@
 # scapper-srv — Changelog (kể từ bản SDK 0.1.6)
 
-Tóm tắt nhanh các thay đổi của scapper-srv kể từ bản dùng SDK **0.1.6** đến bản hiện tại (SDK **0.4.0**). Tài liệu này dành cho các service downstream đang publish job qua RabbitMQ.
+Tóm tắt nhanh các thay đổi của scapper-srv kể từ bản dùng SDK **0.1.6** đến bản hiện tại (SDK **0.5.0**). Tài liệu này dành cho các service downstream đang publish job qua RabbitMQ.
 
-> **TL;DR**: Tất cả action cũ vẫn hoạt động và **trả về cùng shape như trước**. Có thêm 1 action mới (`facebook.page_posts`). Một vài tham số TikTok mới được mở để hỗ trợ phân trang/region.
+> **TL;DR**: Tất cả action cũ vẫn hoạt động và **trả về cùng shape như trước**. Có 2 action mới (`facebook.page_posts`, `tiktok.user_posts`). Một vài tham số TikTok mới được mở để hỗ trợ phân trang/region.
 
 ---
 
@@ -57,7 +57,56 @@ Lấy danh sách bài viết trên timeline của 1 profile/page theo **numeric 
 }
 ```
 
-### 2.2. TikTok — `search` mở rộng tham số
+### 2.2. TikTok — action `user_posts`
+
+Lấy toàn bộ video timeline của 1 profile TikTok (mirror của `facebook.page_posts`).
+
+**Request params:**
+```json
+{
+  "action": "user_posts",
+  "username": "improve_english_",
+  "count": 100,
+  "cursor": null
+}
+```
+
+- Phải truyền **một trong hai**:
+  - `sec_uid` (ưu tiên — nếu service bạn đã có sẵn từ trước, tiết kiệm 1 hop resolve).
+  - `username`: chỉ phần sau `@`, không kèm `@`. Server sẽ tự resolve sang `sec_uid`.
+  - Nếu truyền cả hai, `sec_uid` thắng.
+- `count` (mặc định 30): số post xin trong 1 job. Server cap ~30 page × 16 post (~480/job). Nếu cần nhiều hơn → dùng `cursor` từ response để gọi tiếp.
+- `cursor` (tuỳ chọn): resume cursor (string ms timestamp) lấy từ response trước.
+
+**Response shape (envelope):**
+```json
+{
+  "sec_uid": "MS4wLjABAAAA...",
+  "post_count": 100,
+  "pages_fetched": 7,
+  "has_more": true,
+  "cursor": "1714...",
+  "user": { "username": "...", "...": "..." },
+  "posts": [ { "video_id": "...", "is_pinned": false, "...": "..." } ]
+}
+```
+
+- `user` chỉ xuất hiện khi resolve từ `username` (lần đầu); các lần resume bằng `sec_uid` sẽ không có field này.
+- Mỗi post có thêm field `is_pinned: bool` — pinned items luôn nằm ở page 1 với `createTime` cũ. Nếu cần lọc "post mới nhất N ngày", **nhớ skip `is_pinned=true`**.
+
+**Lỗi resolve username** (profile không tồn tại / region restrict): scapper-srv KHÔNG raise mà trả về body có cấu trúc:
+```json
+{
+  "error": "username_resolve_failed",
+  "message": "Không resolve được username='...': status_404",
+  "status": 404,
+  "username": "...",
+  "sec_uid": null
+}
+```
+Downstream nên check `error` key trước khi parse `posts`.
+
+### 2.3. TikTok — `search` mở rộng tham số
 
 Action `tiktok.search` vẫn hoạt động như cũ nếu chỉ truyền `keywords`. Có thêm các tham số tuỳ chọn:
 
@@ -78,7 +127,7 @@ Service cũ chỉ truyền `keywords` không cần đổi gì — defaults giữ
 Đây là phần internal, ghi lại để team biết khi debug:
 
 - **Facebook search/comments** đã được migrate sang đường GraphQL (v2 jobs) ở phía SDK. Handler tự unwrap envelope để **trả về đúng `list[dict]` như trước** cho các action `search`, `posts`, `comments` → **caller không cần biết**.
-- Vendored SDK wheel trong repo nâng từ `tinlikesub-0.1.6` lên `tinlikesub-0.4.0`. Dockerfile cài SDK trực tiếp từ source khi build, wheel chỉ phục vụ dev-install local.
+- Vendored SDK wheel trong repo nâng từ `tinlikesub-0.1.6` lên `tinlikesub-0.5.0`. Dockerfile cài SDK trực tiếp từ source khi build, wheel chỉ phục vụ dev-install local.
 
 ---
 
@@ -88,7 +137,8 @@ Nếu bạn đang dùng scapper-srv bản 0.1.6:
 
 - [x] Không phải đổi action name nào.
 - [x] Không phải đổi response parser nào.
-- [ ] _(Tuỳ chọn)_ Nếu cần lấy posts từ timeline 1 profile/page → dùng action mới `facebook.page_posts`.
+- [ ] _(Tuỳ chọn)_ Nếu cần lấy posts từ timeline 1 profile/page Facebook → dùng action mới `facebook.page_posts`.
+- [ ] _(Tuỳ chọn)_ Nếu cần lấy toàn bộ video timeline của 1 profile TikTok → dùng action mới `tiktok.user_posts`.
 - [ ] _(Tuỳ chọn)_ Nếu cần phân trang/region/auto-paginate cho TikTok search → dùng các param mới của `tiktok.search`.
 
 ---

@@ -6,7 +6,9 @@ import re
 from typing import Any
 
 from loguru import logger
-from tinlikesub import TinLikeSubClient
+from tinlikesub import JobFailed, TinLikeSubClient
+
+_USERNAME_RESOLVE_STATUS_RE = re.compile(r"status_(\d+)")
 
 # Extract aweme_id from TikTok video URL
 # e.g. https://www.tiktok.com/@user/video/7612600015135034644 → 7612600015135034644
@@ -114,6 +116,40 @@ async def handle_comment_replies(client: TinLikeSubClient, params: dict) -> Any:
     )
 
 
+async def handle_user_posts(client: TinLikeSubClient, params: dict) -> Any:
+    sec_uid = params.get("sec_uid")
+    username = params.get("username")
+    if not sec_uid and not username:
+        raise ValueError("must provide 'sec_uid' or 'username'")
+    count = params.get("count", 30)
+    cursor = params.get("cursor")
+    logger.info(
+        f"[TikTok] user_posts: sec_uid={'<set>' if sec_uid else None} "
+        f"username={username} count={count} cursor={cursor}"
+    )
+    try:
+        envelope = await client.tiktok.get_user_posts(
+            sec_uid=sec_uid, username=username, count=count, cursor=cursor,
+        )
+    except JobFailed as e:
+        msg = str(e)
+        m = _USERNAME_RESOLVE_STATUS_RE.search(msg)
+        status = int(m.group(1)) if m else None
+        logger.warning(f"[TikTok] user_posts failed: {msg}")
+        return {
+            "error": "username_resolve_failed" if "resolve" in msg else "job_failed",
+            "message": msg,
+            "status": status,
+            "username": username,
+            "sec_uid": sec_uid,
+        }
+    logger.debug(
+        f"[TikTok] user_posts: post_count={envelope.get('post_count')} "
+        f"has_more={envelope.get('has_more')} cursor={envelope.get('cursor')}"
+    )
+    return envelope
+
+
 async def handle_cookie_check(client: TinLikeSubClient, params: dict) -> Any:
     logger.info("[TikTok] cookie_check")
     return await client.tiktok.check_cookie()
@@ -172,6 +208,7 @@ HANDLERS = {
     "comments": handle_comments,
     "summary": handle_summary,
     "comment_replies": handle_comment_replies,
+    "user_posts": handle_user_posts,
     "cookie_check": handle_cookie_check,
     "full_flow": handle_full_flow,
 }
