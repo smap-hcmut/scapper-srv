@@ -1,0 +1,5 @@
+FROM rabbitmq:3.13-management
+
+COPY scripts/rabbitmq/enabled_plugins /etc/rabbitmq/enabled_plugins
+COPY scripts/rabbitmq/definitions.json /etc/rabbitmq/definitions.json
+COPY scripts/rabbitmq/rabbitmq.conf /etc/rabbitmq/rabbitmq.conf
