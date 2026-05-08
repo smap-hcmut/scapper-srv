@@ -29,16 +29,28 @@ cp .env.example .env
 
 ```env
 # RabbitMQ
-RABBITMQ_URL=amqp://guest:guest@localhost:5672/
+RABBITMQ_URL=amqp://admin:21042004@172.16.21.200:5673/
+
+# App
+MODE=production
+DEBUG=False
 
 # TinLikeSub API
-API_BASE_URL=https://api.tinlikesub.pro
-API_KEY=your-api-key
+API_BASE_URL=https://api.tinlikesub.pro/
+API_KEY=sk-9wC3UCwGeROwjw-ktWdd4YghZHK2NH2Zkhw6oZpLLjU
 API_SECRET_KEY=your-secret-key
 
 # Worker
 WORKER_PREFETCH_COUNT=1
 OUTPUT_DIR=output
+
+# MinIO
+MINIO_ENDPOINT=172.16.21.10:9000
+MINIO_ACCESS_KEY=tantai
+MINIO_SECRET_KEY=21042004
+MINIO_USE_SSL=False
+MINIO_BUCKET=ingest-data
+MINIO_REGION=us-east-1
 ```
 
 > **API_KEY** và **API_SECRET_KEY** sẽ được cung cấp riêng cho từng khách hàng.

@@ -7,16 +7,17 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     # App
+    MODE: str = "production"
     APP_NAME: str = "Scapper Worker Service"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
 
     # RabbitMQ
-    RABBITMQ_URL: str = "amqp://guest:guest@localhost:5672/"
+    RABBITMQ_URL: str = "amqp://admin:21042004@172.16.21.200:5673/"
 
     # TinLikeSub API (main API this worker calls via SDK)
-    API_BASE_URL: str = "http://localhost:8104"
-    API_KEY: str = ""
+    API_BASE_URL: str = "https://api.tinlikesub.pro/"
+    API_KEY: str = "sk-9wC3UCwGeROwjw-ktWdd4YghZHK2NH2Zkhw6oZpLLjU"
     API_SECRET_KEY: str = ""
 
     # Worker
@@ -24,9 +25,9 @@ class Settings(BaseSettings):
     OUTPUT_DIR: str = "output"
 
     # MinIO
-    MINIO_ENDPOINT: str = "localhost:9000"
-    MINIO_ACCESS_KEY: str = ""
-    MINIO_SECRET_KEY: str = ""
+    MINIO_ENDPOINT: str = "172.16.21.10:9000"
+    MINIO_ACCESS_KEY: str = "tantai"
+    MINIO_SECRET_KEY: str = "21042004"
     MINIO_USE_SSL: bool = False
     MINIO_BUCKET: str = "ingest-data"
 
