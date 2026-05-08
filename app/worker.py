@@ -30,6 +30,8 @@ class Worker:
         # and queues from different platforms can run concurrently.
         self._channels: list[aio_pika.abc.AbstractChannel] = []
         self._client: TinLikeSubClient | None = None
+        self._queues: dict[str, aio_pika.abc.AbstractQueue] = {}
+        self._consumer_tags: dict[str, str] = {}
 
         # Resolve queue names from platform names or queue names
         if queues:
@@ -68,7 +70,8 @@ class Worker:
             self._channels.append(channel)
 
             queue = await channel.declare_queue(queue_name, durable=True)
-            await queue.consume(
+            self._queues[queue_name] = queue
+            self._consumer_tags[queue_name] = await queue.consume(
                 lambda msg, qn=queue_name: self._on_message(msg, qn),
             )
             logger.info(
@@ -89,9 +92,68 @@ class Worker:
             if not channel.is_closed:
                 await channel.close()
         self._channels.clear()
+        self._queues.clear()
+        self._consumer_tags.clear()
         if self._connection and not self._connection.is_closed:
             await self._connection.close()
         logger.info("Worker stopped.")
+
+    async def health_status(self) -> dict[str, Any]:
+        """Report RabbitMQ connection, channel, and queue consumer health."""
+        connection_open = self._connection is not None and not self._connection.is_closed
+        queue_statuses = []
+
+        for queue_name, channel in zip(self._queue_names, self._channels):
+            channel_open = channel is not None and not channel.is_closed
+            consumer_tag = self._consumer_tags.get(queue_name)
+            consumer_count = None
+            active = connection_open and channel_open and bool(consumer_tag)
+
+            if channel_open:
+                try:
+                    queue = await channel.declare_queue(
+                        queue_name,
+                        durable=True,
+                        passive=True,
+                    )
+                    consumer_count = getattr(
+                        queue.declaration_result,
+                        "consumer_count",
+                        None,
+                    )
+                    active = active and (consumer_count or 0) > 0
+                except Exception as exc:
+                    active = False
+                    queue_statuses.append(
+                        {
+                            "queue": queue_name,
+                            "consumer_tag": consumer_tag,
+                            "consumer_count": consumer_count,
+                            "active": active,
+                            "error": str(exc),
+                        }
+                    )
+                    continue
+
+            queue_statuses.append(
+                {
+                    "queue": queue_name,
+                    "consumer_tag": consumer_tag,
+                    "consumer_count": consumer_count,
+                    "active": active,
+                }
+            )
+
+        return {
+            "healthy": connection_open
+            and len(self._channels) == len(self._queue_names)
+            and all(status["active"] for status in queue_statuses),
+            "connection_open": connection_open,
+            "channels_open": [
+                not channel.is_closed for channel in self._channels
+            ],
+            "queues": queue_statuses,
+        }
 
     async def _on_message(
         self, message: AbstractIncomingMessage, queue_name: str

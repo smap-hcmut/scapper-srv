@@ -6,6 +6,9 @@ pydantic-settings==2.7.1
 # RabbitMQ (async)
 aio-pika==9.5.4
 
+# MinIO artifact upload
+minio==7.2.8
+
 # Logging
 loguru==0.7.3
 

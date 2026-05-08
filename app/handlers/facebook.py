@@ -9,17 +9,40 @@ from tinlikesub import TinLikeSubClient
 
 
 async def handle_search(client: TinLikeSubClient, params: dict) -> Any:
+    """Alias for search_graphql — the legacy v1 Graph-search SDK method was
+    removed in tinlikesub 0.3.0 (no v2 JobKind backed it). Output shape is
+    preserved as ``list[dict]`` so downstream services don't need to change.
+    """
     keyword = params.get("keyword", "")
-    limit = params.get("limit", 20)
-    logger.info(f"[Facebook] search: keyword={keyword} limit={limit}")
-    return await client.facebook.search(keyword=keyword, limit=limit)
+    count = params.get("limit", params.get("count", 20))
+    cursor = params.get("cursor")
+    logger.info(f"[Facebook] search: keyword={keyword} count={count}")
+    envelope = await client.facebook.search_graphql(
+        keyword=keyword, count=count, cursor=cursor,
+    )
+    logger.debug(
+        f"[Facebook] search envelope: end_cursor={envelope.get('end_cursor')} "
+        f"has_next={envelope.get('has_next')}"
+    )
+    return envelope.get("posts", [])
 
 
 async def handle_posts(client: TinLikeSubClient, params: dict) -> Any:
+    """Same migration story as handle_search — routes through GraphQL/v2.
+    Returns ``list[dict]`` for backward compat with downstream consumers.
+    """
     keyword = params.get("keyword", "")
-    page_size = params.get("page_size", 20)
-    logger.info(f"[Facebook] posts: keyword={keyword}")
-    return await client.facebook.search(keyword=keyword, limit=page_size)
+    count = params.get("page_size", params.get("count", 20))
+    cursor = params.get("cursor")
+    logger.info(f"[Facebook] posts: keyword={keyword} count={count}")
+    envelope = await client.facebook.search_graphql(
+        keyword=keyword, count=count, cursor=cursor,
+    )
+    logger.debug(
+        f"[Facebook] posts envelope: end_cursor={envelope.get('end_cursor')} "
+        f"has_next={envelope.get('has_next')}"
+    )
+    return envelope.get("posts", [])
 
 
 async def handle_post_detail(client: TinLikeSubClient, params: dict) -> Any:
@@ -30,10 +53,23 @@ async def handle_post_detail(client: TinLikeSubClient, params: dict) -> Any:
 
 
 async def handle_comments(client: TinLikeSubClient, params: dict) -> Any:
+    """Alias for comments_graphql — the legacy Graph-API SDK method was
+    removed in tinlikesub 0.3.0 (no v2 JobKind backed it). Output shape is
+    preserved as ``list[dict]`` so downstream services don't need to change.
+    """
     post_id = params["post_id"]
-    limit = params.get("limit", 100)
-    logger.info(f"[Facebook] comments: post_id={post_id} limit={limit}")
-    return await client.facebook.get_comments(post_id=post_id, limit=limit)
+    count = params.get("limit", params.get("count", 100))
+    cursor = params.get("cursor")
+    sort = params.get("sort", "hot")
+    logger.info(f"[Facebook] comments: post_id={post_id} count={count}")
+    envelope = await client.facebook.get_comments_graphql(
+        post_id=post_id, count=count, cursor=cursor, sort=sort,
+    )
+    logger.debug(
+        f"[Facebook] comments envelope: total={envelope.get('total_count')} "
+        f"end_cursor={envelope.get('end_cursor')} has_next={envelope.get('has_next')}"
+    )
+    return envelope.get("comments", [])
 
 
 async def handle_comments_graphql(client: TinLikeSubClient, params: dict) -> Any:
@@ -88,6 +124,21 @@ async def handle_search_graphql_batch(client: TinLikeSubClient, params: dict) ->
     )
 
 
+async def handle_page_posts(client: TinLikeSubClient, params: dict) -> Any:
+    page_id = params["page_id"]
+    count = params.get("count", params.get("limit", 10))
+    cursor = params.get("cursor")
+    logger.info(f"[Facebook] page_posts: page_id={page_id} count={count}")
+    envelope = await client.facebook.get_page_posts(
+        page_id=page_id, count=count, cursor=cursor,
+    )
+    logger.debug(
+        f"[Facebook] page_posts: post_count={envelope.get('post_count')} "
+        f"end_cursor={envelope.get('end_cursor')} has_next={envelope.get('has_next')}"
+    )
+    return envelope
+
+
 async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
     """search keyword → get posts → get comments (graphql) for each post."""
     keyword = params.get("keyword", "")
@@ -137,5 +188,6 @@ HANDLERS = {
     "comments_graphql_batch": handle_comments_graphql_batch,
     "search_graphql": handle_search_graphql,
     "search_graphql_batch": handle_search_graphql_batch,
+    "page_posts": handle_page_posts,
     "full_flow": handle_full_flow,
 }
