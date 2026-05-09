@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "Scapper Worker Service"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
+    LOG_LEVEL: str = "WARNING"
+    LOGGER_ENCODING: str = "json"
 
     # RabbitMQ
     RABBITMQ_URL: str = "amqp://admin:21042004@172.16.21.200:5673/"

@@ -17,4 +17,4 @@ RUN mkdir -p output
 
 EXPOSE 8105
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8105"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8105", "--log-level", "warning", "--no-access-log"]

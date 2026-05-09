@@ -127,6 +127,50 @@ async def handle_page_posts(client: TinLikeSubClient, params: dict) -> Any:
     return envelope
 
 
+async def handle_page_full_flow(client: TinLikeSubClient, params: dict) -> Any:
+    """Page timeline → comments for each post.
+
+    The response intentionally mirrors ``facebook.full_flow`` so downstream UAP
+    parsers can reuse the same shape while the source is scoped to one page.
+    """
+    page_id = params["page_id"]
+    count = params.get("count", params.get("limit", 20))
+    cursor = params.get("cursor")
+    comment_count = params.get("comment_count", 100)
+    comment_sort = params.get("comment_sort", "hot")
+
+    logger.info(
+        f"[Facebook] page_full_flow: page_id={page_id} count={count} "
+        f"comment_count={comment_count}"
+    )
+
+    page_result = await client.facebook.get_page_posts(
+        page_id=page_id, count=count, cursor=cursor,
+    )
+    posts = page_result.get("posts", [])
+    results = []
+
+    for post in posts:
+        post_id = post.get("post_id")
+        entry: dict[str, Any] = {"post": post, "comments": None}
+        if post_id:
+            try:
+                entry["comments"] = await client.facebook.get_comments_graphql(
+                    post_id=post_id, count=comment_count, sort=comment_sort,
+                )
+            except Exception as e:
+                entry["comments"] = {"error": str(e)}
+        results.append(entry)
+
+    return {
+        "page_id": page_id,
+        "post_count": len(results),
+        "has_next": page_result.get("has_next"),
+        "end_cursor": page_result.get("end_cursor"),
+        "posts": results,
+    }
+
+
 async def handle_full_flow(client: TinLikeSubClient, params: dict) -> Any:
     """search keyword → get posts → get comments (graphql) for each post."""
     keyword = params.get("keyword", "")
@@ -171,5 +215,6 @@ HANDLERS = {
     "search_graphql": handle_search_graphql,
     "search_graphql_batch": handle_search_graphql_batch,
     "page_posts": handle_page_posts,
+    "page_full_flow": handle_page_full_flow,
     "full_flow": handle_full_flow,
 }

@@ -14,7 +14,11 @@ from loguru import logger
 
 
 async def main():
+    from app.config import get_settings
+    from app.logging_config import configure_logging
     from app.worker import Worker
+
+    configure_logging(get_settings())
 
     platforms = sys.argv[1:] if len(sys.argv) > 1 else None
     worker = Worker(queues=platforms)

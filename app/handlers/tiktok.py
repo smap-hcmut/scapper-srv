@@ -150,6 +150,72 @@ async def handle_user_posts(client: TinLikeSubClient, params: dict) -> Any:
     return envelope
 
 
+async def handle_user_full_flow(client: TinLikeSubClient, params: dict) -> Any:
+    """Profile timeline → detail + comments for each video.
+
+    Output mirrors ``tiktok.full_flow`` so ingest can parse focused profile
+    crawls through the existing UAP mapper.
+    """
+    sec_uid = params.get("sec_uid")
+    username = params.get("username")
+    if not sec_uid and not username:
+        raise ValueError("must provide 'sec_uid' or 'username'")
+
+    count = params.get("count", 50)
+    cursor = params.get("cursor")
+    threshold = params.get("threshold", 0.3)
+    comment_count = params.get("comment_count", 100)
+    logger.info(
+        f"[TikTok] user_full_flow: sec_uid={'<set>' if sec_uid else None} "
+        f"username={username} count={count} cursor={cursor}"
+    )
+
+    user_result = await handle_user_posts(client, {
+        "sec_uid": sec_uid,
+        "username": username,
+        "count": count,
+        "cursor": cursor,
+    })
+    if isinstance(user_result, dict) and user_result.get("error"):
+        return user_result
+
+    posts = user_result.get("posts", []) if isinstance(user_result, dict) else []
+    results = []
+    for post in posts:
+        entry: dict[str, Any] = {"post": post, "detail": None, "comments": None}
+
+        video_url = post.get("url") or post.get("share_url") or post.get("video_url")
+        if video_url:
+            try:
+                detail_list = await client.tiktok.get_post_detail(urls=[video_url])
+                entry["detail"] = detail_list[0] if detail_list else None
+            except Exception as e:
+                entry["detail"] = {"error": str(e)}
+
+        aweme_id = post.get("aweme_id") or post.get("video_id") or post.get("id")
+        if aweme_id:
+            try:
+                comments_list = await client.tiktok.get_comments(
+                    aweme_ids=[str(aweme_id)], count=comment_count, threshold=threshold,
+                )
+                entry["comments"] = comments_list[0] if comments_list else None
+            except Exception as e:
+                entry["comments"] = {"error": str(e)}
+
+        results.append(entry)
+
+    return {
+        "username": username,
+        "sec_uid": user_result.get("sec_uid") if isinstance(user_result, dict) else sec_uid,
+        "post_count": len(results),
+        "pages_fetched": user_result.get("pages_fetched") if isinstance(user_result, dict) else None,
+        "has_more": user_result.get("has_more") if isinstance(user_result, dict) else None,
+        "cursor": user_result.get("cursor") if isinstance(user_result, dict) else None,
+        "user": user_result.get("user") if isinstance(user_result, dict) else None,
+        "posts": results,
+    }
+
+
 async def handle_cookie_check(client: TinLikeSubClient, params: dict) -> Any:
     logger.info("[TikTok] cookie_check")
     return await client.tiktok.check_cookie()
@@ -209,6 +275,7 @@ HANDLERS = {
     "summary": handle_summary,
     "comment_replies": handle_comment_replies,
     "user_posts": handle_user_posts,
+    "user_full_flow": handle_user_full_flow,
     "cookie_check": handle_cookie_check,
     "full_flow": handle_full_flow,
 }
