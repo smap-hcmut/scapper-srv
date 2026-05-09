@@ -2,10 +2,64 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from loguru import logger
 from tinlikesub import TinLikeSubClient
+
+
+_PAGE_POSTS_JOB_TIMEOUT = 180.0
+_PAGE_FULL_FLOW_MAX_COUNT = 3
+_PAGE_FULL_FLOW_MAX_COMMENT_COUNT = 10
+_PAGE_FULL_FLOW_FALLBACK_COUNT = _PAGE_FULL_FLOW_MAX_COUNT
+_PAGE_POSTS_RETRY_DELAY_SECONDS = 1.5
+
+
+def _positive_int(value: Any, default: int) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return default
+    return parsed if parsed > 0 else default
+
+
+async def _get_page_posts_with_retry(
+    client: TinLikeSubClient,
+    *,
+    page_id: str,
+    count: int,
+    cursor: str | None = None,
+) -> dict:
+    """Fetch page posts with a small fallback batch for flaky FB timeline jobs."""
+    requested_count = max(1, int(count or 1))
+    fallback_count = max(1, min(_PAGE_FULL_FLOW_FALLBACK_COUNT, requested_count))
+    attempts = [requested_count]
+    if fallback_count != requested_count:
+        attempts.append(fallback_count)
+
+    last_error: Exception | None = None
+    for attempt_count in attempts:
+        for retry_index in range(2):
+            try:
+                return await client.facebook.get_page_posts(
+                    page_id=page_id,
+                    count=attempt_count,
+                    cursor=cursor,
+                    timeout=_PAGE_POSTS_JOB_TIMEOUT,
+                )
+            except Exception as exc:
+                last_error = exc
+                logger.warning(
+                    "[Facebook] page_posts retryable failure: "
+                    f"page_id={page_id} count={attempt_count} "
+                    f"retry={retry_index + 1}/2 error={exc}"
+                )
+                if retry_index == 0:
+                    await asyncio.sleep(_PAGE_POSTS_RETRY_DELAY_SECONDS)
+
+    assert last_error is not None
+    raise last_error
 
 
 async def handle_search(client: TinLikeSubClient, params: dict) -> Any:
@@ -117,8 +171,8 @@ async def handle_page_posts(client: TinLikeSubClient, params: dict) -> Any:
     count = params.get("count", params.get("limit", 10))
     cursor = params.get("cursor")
     logger.info(f"[Facebook] page_posts: page_id={page_id} count={count}")
-    envelope = await client.facebook.get_page_posts(
-        page_id=page_id, count=count, cursor=cursor,
+    envelope = await _get_page_posts_with_retry(
+        client, page_id=page_id, count=count, cursor=cursor,
     )
     logger.debug(
         f"[Facebook] page_posts: post_count={envelope.get('post_count')} "
@@ -134,19 +188,36 @@ async def handle_page_full_flow(client: TinLikeSubClient, params: dict) -> Any:
     parsers can reuse the same shape while the source is scoped to one page.
     """
     page_id = params["page_id"]
-    count = params.get("count", params.get("limit", 20))
+    requested_count = _positive_int(params.get("count", params.get("limit", 20)), 20)
+    count = min(requested_count, _PAGE_FULL_FLOW_MAX_COUNT)
     cursor = params.get("cursor")
-    comment_count = params.get("comment_count", 100)
+    requested_comment_count = _positive_int(params.get("comment_count", 100), 100)
+    comment_count = min(requested_comment_count, _PAGE_FULL_FLOW_MAX_COMMENT_COUNT)
     comment_sort = params.get("comment_sort", "hot")
 
     logger.info(
-        f"[Facebook] page_full_flow: page_id={page_id} count={count} "
-        f"comment_count={comment_count}"
+        f"[Facebook] page_full_flow: page_id={page_id} count={count}/{requested_count} "
+        f"comment_count={comment_count}/{requested_comment_count}"
     )
 
-    page_result = await client.facebook.get_page_posts(
-        page_id=page_id, count=count, cursor=cursor,
-    )
+    try:
+        page_result = await _get_page_posts_with_retry(
+            client, page_id=page_id, count=count, cursor=cursor,
+        )
+    except Exception as exc:
+        logger.warning(
+            "[Facebook] page_full_flow page timeline unavailable: "
+            f"page_id={page_id} count={count} error={exc}"
+        )
+        return {
+            "page_id": page_id,
+            "post_count": 0,
+            "has_next": False,
+            "end_cursor": None,
+            "posts": [],
+            "error": "page_posts_unavailable",
+            "message": str(exc) or exc.__class__.__name__,
+        }
     posts = page_result.get("posts", [])
     results = []
 
