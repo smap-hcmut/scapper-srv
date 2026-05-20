@@ -57,9 +57,10 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(
             f"Failed to start worker: {e}. "
-            "API endpoints will work but worker won't consume tasks."
+            "Exiting so Kubernetes restarts the consumer."
         )
         _worker = None
+        raise
 
     yield
 

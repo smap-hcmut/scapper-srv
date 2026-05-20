@@ -237,7 +237,10 @@ class Worker:
                 return
 
             try:
-                crawl_result = await handler(self._client, params)
+                crawl_result = await asyncio.wait_for(
+                    handler(self._client, params),
+                    timeout=self.settings.TASK_TIMEOUT_SECONDS,
+                )
                 result = TaskResult(
                     task_id=task_id,
                     queue=queue_name,
@@ -251,6 +254,26 @@ class Worker:
                 self._save_result(result)
                 await self._publish_completion(result)
                 logger.info(f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}")
+            except asyncio.TimeoutError:
+                error_message = (
+                    f"task timed out after {self.settings.TASK_TIMEOUT_SECONDS:.0f}s"
+                )
+                logger.warning(
+                    f"[{queue_name}] Timeout processing message: "
+                    f"action={action} task_id={task_id[:8]} error={error_message}"
+                )
+                result = TaskResult(
+                    task_id=task_id,
+                    queue=queue_name,
+                    action=action,
+                    params=params,
+                    created_at=created_at,
+                    completed_at=datetime.now(timezone.utc).isoformat(),
+                    status="error",
+                    error=error_message,
+                )
+                self._save_result(result)
+                await self._publish_completion(result)
             except Exception as e:
                 error_message = self._format_processing_error(e)
                 logger.exception(f"[{queue_name}] Error processing message: {error_message}")

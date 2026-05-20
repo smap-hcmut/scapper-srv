@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     # Worker
     WORKER_PREFETCH_COUNT: int = 1
+    TASK_TIMEOUT_SECONDS: float = 600.0
     OUTPUT_DIR: str = "output"
 
     # MinIO
