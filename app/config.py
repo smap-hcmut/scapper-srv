@@ -23,10 +23,11 @@ class Settings(BaseSettings):
     API_SECRET_KEY: str = ""
 
     # Worker
-    WORKER_PREFETCH_COUNT: int = 1
+    WORKER_PREFETCH_COUNT: int = 4
     WORKER_MAX_RETRIES: int = 2
     WORKER_RETRY_DELAY_SECONDS: float = 2.0
     TASK_TIMEOUT_SECONDS: float = 600.0
+    TINLIKESUB_TIMEOUT_SECONDS: float = 180.0
     OUTPUT_DIR: str = "output"
 
     # MinIO

@@ -28,6 +28,54 @@ INGEST_DRYRUN_COMPLETIONS_QUEUE = "ingest_dryrun_completions"
 INGEST_TASK_DEAD_LETTER_QUEUE = "ingest_task_dead_letter"
 RUNTIME_KIND_DRYRUN = "dryrun"
 
+WORKER_ACTION_LIMITS: dict[str, dict[str, int]] = {
+    "full_flow": {
+        "limit": 12,
+        "comment_count": 30,
+    },
+    "user_full_flow": {
+        "count": 12,
+        "comment_count": 30,
+    },
+    "page_full_flow": {
+        "count": 2,
+        "comment_count": 8,
+    },
+    "search": {
+        "count": 12,
+        "limit": 12,
+    },
+    "posts": {
+        "count": 12,
+        "page_size": 16,
+    },
+    "comments": {
+        "count": 30,
+        "limit": 30,
+        "page_size": 30,
+    },
+    "comments_graphql_batch": {
+        "count": 20,
+    },
+    "comments_graphql": {
+        "count": 20,
+    },
+    "comment_replies": {
+        "count": 20,
+    },
+    "video_detail": {},
+    "post_detail": {},
+    "transcript": {},
+}
+
+
+def _coerce_int(value: object, default: int) -> int:
+    try:
+        as_int = int(value)
+    except (TypeError, ValueError):
+        return default
+    return default if as_int < 0 else as_int
+
 
 class Worker:
     """Async RabbitMQ consumer that processes tasks via the TinLikeSub SDK."""
@@ -64,7 +112,7 @@ class Worker:
         self._client = TinLikeSubClient(
             base_url=self.settings.API_BASE_URL,
             api_key=self.settings.API_KEY,
-            timeout=120.0,
+            timeout=self.settings.TINLIKESUB_TIMEOUT_SECONDS,
             secret_key=self.settings.API_SECRET_KEY,
         )
         self._minio = Minio(
@@ -215,7 +263,7 @@ class Worker:
 
         task_id = str(body.get("task_id", "unknown"))
         action = str(body.get("action", "unknown"))
-        params = body.get("params", {})
+        params = self._sanitize_task_params(action, dict(body.get("params", {}) or {}))
         created_at = str(body.get("created_at", ""))
 
         logger.info(f"[{queue_name}] Received: action={action} task_id={task_id[:8]} retry={retry_count}")
@@ -303,6 +351,43 @@ class Worker:
         self._save_result(result)
         await self._publish_completion(result)
         await message.ack()
+
+    def _sanitize_task_params(self, action: str, params: dict[str, Any]) -> dict[str, Any]:
+        if not isinstance(params, dict):
+            return {}
+
+        if action not in WORKER_ACTION_LIMITS:
+            return params
+
+        normalized = dict(params)
+        caps = WORKER_ACTION_LIMITS[action]
+
+        for key, cap in caps.items():
+            if key in normalized:
+                current = _coerce_int(normalized[key], default=_coerce_int(caps[key], default=0))
+                limited = min(max(current, 1), cap)
+                if current != limited:
+                    logger.warning(
+                        f"[{action}] sanitize param clamped: {key}={current} -> {limited} "
+                        f"(cap={cap})"
+                    )
+                normalized[key] = limited
+
+        if "comment_sort" in normalized and str(normalized["comment_sort"]) not in {"hot", "top", "newest"}:
+            normalized["comment_sort"] = "hot"
+
+        if action == "page_full_flow":
+            normalized["count"] = min(_coerce_int(normalized.get("count", 2), 2), 2)
+
+        if action == "full_flow" and "threshold" in normalized:
+            try:
+                threshold = float(normalized["threshold"])
+                if threshold < 0 or threshold > 1:
+                    normalized["threshold"] = 0.3
+            except (TypeError, ValueError):
+                normalized["threshold"] = 0.3
+
+        return normalized
 
     async def _should_retry(
         self,
