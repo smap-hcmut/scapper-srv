@@ -24,6 +24,8 @@ class Settings(BaseSettings):
 
     # Worker
     WORKER_PREFETCH_COUNT: int = 1
+    WORKER_MAX_RETRIES: int = 2
+    WORKER_RETRY_DELAY_SECONDS: float = 2.0
     TASK_TIMEOUT_SECONDS: float = 600.0
     OUTPUT_DIR: str = "output"
 

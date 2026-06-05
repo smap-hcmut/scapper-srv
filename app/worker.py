@@ -25,6 +25,7 @@ from app.schemas import TaskResult
 
 INGEST_TASK_COMPLETIONS_QUEUE = "ingest_task_completions"
 INGEST_DRYRUN_COMPLETIONS_QUEUE = "ingest_dryrun_completions"
+INGEST_TASK_DEAD_LETTER_QUEUE = "ingest_task_dead_letter"
 RUNTIME_KIND_DRYRUN = "dryrun"
 
 
@@ -203,6 +204,8 @@ class Worker:
         self, message: AbstractIncomingMessage, queue_name: str
     ) -> None:
         """Process a single message from a queue."""
+        retry_count = self._get_retry_count(message)
+
         try:
             body = json.loads(message.body.decode())
         except Exception as exc:
@@ -210,87 +213,173 @@ class Worker:
             await message.ack()
             return
 
-        async with message.process(requeue=True):
-            task_id = str(body.get("task_id", "unknown"))
-            action = str(body.get("action", "unknown"))
-            params = body.get("params", {})
-            created_at = str(body.get("created_at", ""))
+        task_id = str(body.get("task_id", "unknown"))
+        action = str(body.get("action", "unknown"))
+        params = body.get("params", {})
+        created_at = str(body.get("created_at", ""))
 
-            logger.info(f"[{queue_name}] Received: action={action} task_id={task_id[:8]}")
+        logger.info(f"[{queue_name}] Received: action={action} task_id={task_id[:8]} retry={retry_count}")
 
-            handlers = QUEUE_HANDLERS.get(queue_name, {})
-            handler = handlers.get(action)
+        handlers = QUEUE_HANDLERS.get(queue_name, {})
+        handler = handlers.get(action)
 
-            if handler is None:
-                error_msg = f"Unknown action '{action}' for queue '{queue_name}'"
-                logger.error(error_msg)
-                result = TaskResult(
-                    task_id=task_id,
-                    queue=queue_name,
-                    action=action,
-                    params=params,
-                    created_at=created_at,
-                    completed_at=datetime.now(timezone.utc).isoformat(),
-                    status="error",
-                    error=error_msg,
-                )
-                self._save_result(result)
-                await self._publish_completion(result)
+        if handler is None:
+            error_msg = f"Unknown action '{action}' for queue '{queue_name}'"
+            logger.error(error_msg)
+            result = TaskResult(
+                task_id=task_id,
+                queue=queue_name,
+                action=action,
+                params=params,
+                created_at=created_at,
+                completed_at=datetime.now(timezone.utc).isoformat(),
+                status="error",
+                error=error_msg,
+            )
+            await self._finalize_message(message, result)
+            return
+
+        start_time = datetime.now(timezone.utc)
+        try:
+            crawl_result = await asyncio.wait_for(
+                handler(self._client, params),
+                timeout=self.settings.TASK_TIMEOUT_SECONDS,
+            )
+            result = TaskResult(
+                task_id=task_id,
+                queue=queue_name,
+                action=action,
+                params=params,
+                created_at=created_at,
+                completed_at=start_time.isoformat(),
+                status="success",
+                result=crawl_result,
+            )
+            await self._finalize_message(message, result)
+            logger.info(f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}")
+        except asyncio.TimeoutError:
+            error_message = (
+                f"task timed out after {self.settings.TASK_TIMEOUT_SECONDS:.0f}s"
+            )
+            logger.warning(
+                f"[{queue_name}] Timeout processing message: "
+                f"action={action} task_id={task_id[:8]} retry={retry_count} error={error_message}"
+            )
+            if await self._should_retry(message, queue_name, body, retry_count, error_message):
+                await message.ack()
                 return
 
-            try:
-                crawl_result = await asyncio.wait_for(
-                    handler(self._client, params),
-                    timeout=self.settings.TASK_TIMEOUT_SECONDS,
-                )
-                result = TaskResult(
-                    task_id=task_id,
-                    queue=queue_name,
-                    action=action,
-                    params=params,
-                    created_at=created_at,
-                    completed_at=datetime.now(timezone.utc).isoformat(),
-                    status="success",
-                    result=crawl_result,
-                )
-                self._save_result(result)
-                await self._publish_completion(result)
-                logger.info(f"[{queue_name}] Completed: action={action} task_id={task_id[:8]}")
-            except asyncio.TimeoutError:
-                error_message = (
-                    f"task timed out after {self.settings.TASK_TIMEOUT_SECONDS:.0f}s"
-                )
-                logger.warning(
-                    f"[{queue_name}] Timeout processing message: "
-                    f"action={action} task_id={task_id[:8]} error={error_message}"
-                )
-                result = TaskResult(
-                    task_id=task_id,
-                    queue=queue_name,
-                    action=action,
-                    params=params,
-                    created_at=created_at,
-                    completed_at=datetime.now(timezone.utc).isoformat(),
-                    status="error",
-                    error=error_message,
-                )
-                self._save_result(result)
-                await self._publish_completion(result)
-            except Exception as e:
-                error_message = self._format_processing_error(e)
-                logger.exception(f"[{queue_name}] Error processing message: {error_message}")
-                result = TaskResult(
-                    task_id=task_id,
-                    queue=queue_name,
-                    action=action,
-                    params=params,
-                    created_at=created_at,
-                    completed_at=datetime.now(timezone.utc).isoformat(),
-                    status="error",
-                    error=error_message,
-                )
-                self._save_result(result)
-                await self._publish_completion(result)
+            result = TaskResult(
+                task_id=task_id,
+                queue=queue_name,
+                action=action,
+                params=params,
+                created_at=created_at,
+                completed_at=datetime.now(timezone.utc).isoformat(),
+                status="error",
+                error=error_message,
+            )
+            await self._finalize_message(message, result)
+        except Exception as e:
+            error_message = self._format_processing_error(e)
+            logger.exception(f"[{queue_name}] Error processing message: {error_message}")
+            if await self._should_retry(message, queue_name, body, retry_count, error_message):
+                await message.ack()
+                return
+
+            result = TaskResult(
+                task_id=task_id,
+                queue=queue_name,
+                action=action,
+                params=params,
+                created_at=created_at,
+                completed_at=datetime.now(timezone.utc).isoformat(),
+                status="error",
+                error=error_message,
+            )
+            await self._finalize_message(message, result)
+
+    async def _finalize_message(self, message: AbstractIncomingMessage, result: TaskResult) -> None:
+        self._save_result(result)
+        await self._publish_completion(result)
+        await message.ack()
+
+    async def _should_retry(
+        self,
+        message: AbstractIncomingMessage,
+        queue_name: str,
+        body: dict[str, Any],
+        retry_count: int,
+        error_message: str,
+    ) -> bool:
+        if retry_count >= self.settings.WORKER_MAX_RETRIES:
+            await self._publish_dead_letter(
+                queue_name,
+                body,
+                retry_count,
+                error_message,
+            )
+            return False
+
+        next_retry_count = retry_count + 1
+        if self.settings.WORKER_RETRY_DELAY_SECONDS > 0:
+            await asyncio.sleep(self.settings.WORKER_RETRY_DELAY_SECONDS)
+
+        headers = self._with_retry_headers(message.headers, next_retry_count)
+        try:
+            from app.publisher import publish_task_with_retry
+            await publish_task_with_retry(queue_name, body, headers=headers)
+            logger.warning(
+                f"[{queue_name}] Retrying task_id={str(body.get('task_id', 'unknown'))[:8]} "
+                f"retry={next_retry_count}/{self.settings.WORKER_MAX_RETRIES}"
+            )
+            return True
+        except Exception as exc:
+            logger.error(
+                f"[{queue_name}] Failed to enqueue retry for task_id={str(body.get('task_id', 'unknown'))[:8]}: {exc}"
+            )
+            return False
+
+    async def _publish_dead_letter(
+        self,
+        queue_name: str,
+        body: dict[str, Any],
+        retry_count: int,
+        error_message: str,
+    ) -> None:
+        dead_letter_payload = {
+            "source_queue": queue_name,
+            "task_id": str(body.get("task_id", "unknown")),
+            "action": str(body.get("action", "unknown")),
+            "params": body.get("params", {}),
+            "created_at": str(body.get("created_at", "")),
+            "failed_at": datetime.now(timezone.utc).isoformat(),
+            "retry_count": retry_count,
+            "error": error_message,
+            "error_type": "processing",
+            "original_payload": body,
+        }
+        from app.publisher import publish_task_with_retry
+        await publish_task_with_retry(INGEST_TASK_DEAD_LETTER_QUEUE, dead_letter_payload)
+
+    @staticmethod
+    def _with_retry_headers(headers: dict[str, object] | None, retry_count: int) -> dict[str, object]:
+        retry_headers = dict(headers or {})
+        retry_headers["x-retry-count"] = retry_count
+        return retry_headers
+
+    @staticmethod
+    def _get_retry_count(message: AbstractIncomingMessage) -> int:
+        try:
+            headers = message.headers or {}
+            if not isinstance(headers, dict):
+                return 0
+            raw_retry = headers.get("x-retry-count")
+            if raw_retry is None:
+                return 0
+            return max(0, int(raw_retry))
+        except Exception:
+            return 0
 
     def _format_processing_error(self, error: Exception) -> str:
         message = str(error).strip() or error.__class__.__name__
