@@ -30,23 +30,23 @@ RUNTIME_KIND_DRYRUN = "dryrun"
 
 WORKER_ACTION_LIMITS: dict[str, dict[str, int]] = {
     "full_flow": {
-        "limit": 12,
-        "comment_count": 30,
+        "limit": 5,
+        "comment_count": 8,
     },
     "user_full_flow": {
-        "count": 12,
-        "comment_count": 30,
+        "count": 5,
+        "comment_count": 8,
     },
     "page_full_flow": {
         "count": 2,
         "comment_count": 8,
     },
     "search": {
-        "count": 12,
-        "limit": 12,
+        "count": 5,
+        "limit": 5,
     },
     "posts": {
-        "count": 12,
+        "count": 5,
         "page_size": 16,
     },
     "comments": {
@@ -331,7 +331,7 @@ class Worker:
         except Exception as e:
             error_message = self._format_processing_error(e)
             logger.exception(f"[{queue_name}] Error processing message: {error_message}")
-            if await self._should_retry(message, queue_name, body, retry_count, error_message):
+            if not self._is_provider_queue_timeout(error_message) and await self._should_retry(message, queue_name, body, retry_count, error_message):
                 await message.ack()
                 return
 
@@ -346,6 +346,11 @@ class Worker:
                 error=error_message,
             )
             await self._finalize_message(message, result)
+
+    @staticmethod
+    def _is_provider_queue_timeout(error_message: str) -> bool:
+        normalized = error_message.lower()
+        return "did not finish within" in normalized and "last_status=queued" in normalized
 
     async def _finalize_message(self, message: AbstractIncomingMessage, result: TaskResult) -> None:
         self._save_result(result)
