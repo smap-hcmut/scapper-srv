@@ -1,6 +1,8 @@
-# Scapper Worker Service
+# Scraper Worker Service (`scapper-srv`)
 
 Async task worker xử lý các tác vụ crawl dữ liệu từ TikTok, Facebook và YouTube thông qua RabbitMQ.
+
+Naming note: the public/business term is "scraper worker"; the runtime repository, Kubernetes service, image, and queue integration keep the legacy name `scapper-srv` for compatibility.
 
 ## Setup
 

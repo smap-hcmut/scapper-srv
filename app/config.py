@@ -8,7 +8,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # App
     MODE: str = "production"
-    APP_NAME: str = "Scapper Worker Service"
+    APP_NAME: str = "Scraper Worker Service (scapper-srv)"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
     LOG_LEVEL: str = "WARNING"

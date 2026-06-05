@@ -74,7 +74,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Scapper Worker Service — RabbitMQ consumer + task submission API",
+    description="Scraper Worker Service (scapper-srv) - RabbitMQ consumer + task submission API",
     lifespan=lifespan,
 )
 

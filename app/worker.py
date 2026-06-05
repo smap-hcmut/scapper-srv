@@ -24,6 +24,8 @@ from app.schemas import TaskResult
 
 
 INGEST_TASK_COMPLETIONS_QUEUE = "ingest_task_completions"
+INGEST_DRYRUN_COMPLETIONS_QUEUE = "ingest_dryrun_completions"
+RUNTIME_KIND_DRYRUN = "dryrun"
 
 
 class Worker:
@@ -331,7 +333,14 @@ class Worker:
             artifact = await self._upload_result_artifact(result)
             payload.update(artifact)
 
-        await publish_task(INGEST_TASK_COMPLETIONS_QUEUE, payload)
+        completion_queue = self._completion_queue(result)
+        await publish_task(completion_queue, payload)
+
+    def _completion_queue(self, result: TaskResult) -> str:
+        runtime_kind = str(result.params.get("runtime_kind", "")).strip().lower()
+        if runtime_kind == RUNTIME_KIND_DRYRUN:
+            return INGEST_DRYRUN_COMPLETIONS_QUEUE
+        return INGEST_TASK_COMPLETIONS_QUEUE
 
     async def _upload_result_artifact(self, result: TaskResult) -> dict[str, Any]:
         if self._minio is None:

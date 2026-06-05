@@ -32,6 +32,13 @@ Durable: Yes | Delivery: Persistent (`delivery_mode = 2`)
 | `params` | **Có** | Object tham số (có thể `{}`) |
 | `created_at` | Không | ISO-8601 timestamp |
 
+Runtime routing note:
+
+| Param | Value | Completion queue |
+|-------|-------|------------------|
+| `runtime_kind` | `dryrun` | `ingest_dryrun_completions` |
+| missing/other | normal crawl | `ingest_task_completions` |
+
 ---
 
 ## tiktok_tasks
