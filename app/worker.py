@@ -232,7 +232,12 @@ class Worker:
         return consume
 
     async def _attach_consumer(self, queue_name: str, callback: Any) -> None:
-        queue = await self._declare_queue(queue_name)
+        # passive=True so this consumer never re-declares the queue with
+        # different arguments than ingest-srv (which is the queue owner and
+        # sets x-dead-letter-exchange). Without this guard, racing the
+        # ingest-srv boot would recreate the queue without DLX args and
+        # trip PRECONDITION_FAILED on the next ingest-srv restart.
+        queue = await self._declare_queue(queue_name, passive=True)
         self._consumer_tags[queue_name] = await queue.consume(callback)
 
     async def _restore_consumer(self, queue_name: str) -> bool:
