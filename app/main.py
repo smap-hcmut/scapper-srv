@@ -11,7 +11,6 @@ from loguru import logger
 from app.config import get_settings
 from app.logging_config import configure_logging
 from app.publisher import close_publisher
-from app.router import router
 from app.worker import Worker
 
 settings = get_settings()
@@ -85,9 +84,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(router, prefix="/api/v1")
-
 
 @app.get("/")
 async def root():
